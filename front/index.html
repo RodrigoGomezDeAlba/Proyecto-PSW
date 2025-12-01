@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Inicio | Mi Empresa</title>
+  <link rel="stylesheet" href="estilos.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-content">
+      <h1 class="logo">Mi Empresa</h1>
+      <nav class="nav">
+        <a href="index.html" class="active">Inicio</a>
+        <a href="contacto.html">Contacto</a>
+        <a href="compra.html">Compra</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Contenido principal -->
+  <main class="container main-content">
+    <!-- Presentación -->
+    <section class="card" style="margin-bottom: 1.5rem;">
+      <h2>Bienvenido</h2>
+      <p class="card-text">
+        Esta es una página de prueba para demostrar cómo enviar correos desde un
+        backend en Node.js. Aquí probamos el flujo de <strong>suscripción</strong>:
+        cuando ingresas tu correo, el backend enviará un email con el
+        <strong>logo de la empresa, el nombre, el lema y un cupón de compra (imagen)</strong>.
+      </p>
+    </section>
+
+    <!-- Suscripción -->
+    <section class="card">
+      <h2>Suscríbete para recibir tu cupón</h2>
+      <p class="card-text">
+        Ingresa tu correo electrónico y te enviaremos un mensaje con tu
+        <strong>cupón de compra</strong> y los datos de la empresa.
+      </p>
+
+      <form id="susForm" class="form">
+        <div class="form-group">
+          <label for="email">Correo electrónico</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="tucorreo@ejemplo.com"
+            required
+          />
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+          Enviar mi cupón
+        </button>
+
+        <p id="susFeedback" class="form-feedback"></p>
+      </form>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> Mi Empresa. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <script>
+    // año dinámico en el footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+  <script type="module" src="js/suscripcion.js"></script>
+</body>
+</html>
