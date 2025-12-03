@@ -13,7 +13,7 @@ const db = mysql.createConnection(process.env.DATABASE_URL || '');
 
 app.get('/api/test', (req, res) => {
     res.json({
-        mensaje: "¡Backend conectado exitosamente!",
+        mensaje: "Backend conectado exitosamente",
         fecha: new Date().toISOString()
     });
 });
