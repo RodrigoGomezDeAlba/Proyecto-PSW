@@ -2,38 +2,42 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const mysql = require('mysql2'); 
 
-const authRoutes = require('./routes/auth.routes');
-const productosRoutes = require('./routes/productos.routes');
-const carritoRoutes = require('./routes/carrito.routes');
+const authRoutes = require('./routes/auth.routes'); 
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middlewares globales
+// Middlewares
 app.use(cors());
 app.use(express.json());
 
-//Aqui conectaremos la BD
+// Conexion a la base
 const db = mysql.createConnection(process.env.DATABASE_URL || '');
 
-app.get('/api/test', (req, res) => {
-    res.json({
-        mensaje: "Backend conectado exitosamente",
-        fecha: new Date().toISOString()
+db.connect((err) => {
+    if (err) {
+        console.error("Error grave conectando a la BD:", err.message);
+    } else {
+        console.log("Conexion exitosa a la Base de Datos MySQL");
+    }
+});
+
+// Prueba base
+app.get('/api/test-db', (req, res) => {
+    db.query('SELECT 1 + 1 AS resultado', (err, results) => {
+        if (err) {
+            return res.status(500).json({ status: 'error', mensaje: 'Error en BD', detalle: err.message });
+        }
+        res.json({ status: 'success', mensaje: '¡Conexión DB Exitosa!', calculo: results[0].resultado });
     });
 });
 
-// Rutas del backend
-app.use('/api/auth', authRoutes);
-app.use('/api', productosRoutes);
-app.use('/api', carritoRoutes);
-
-// Endpoint sencillo para comprobar que el back está vivo
 app.get('/', (req, res) => {
   res.json({ message: 'API ProyectoFinal funcionando' });
 });
 
 app.listen(PORT, () => {
-  console.log(`Servidor backend escuchando en http://localhost:${PORT}`);
+  console.log(`Servidor backend escuchando en puerto ${PORT}`);
 });
