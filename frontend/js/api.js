@@ -26,7 +26,6 @@ async function probarConexion() {
         console.log("Datos recibidos:", datos);
 
     } catch (error) {
-        // Manejo de errores [cite: 29, 38]
         console.error("Error al conectar:", error);
         elementoResultado.innerHTML = `
             <h3>Error de Conexion</h3>
@@ -37,6 +36,3 @@ async function probarConexion() {
         elementoResultado.style.color = "red";
     }
 }
-
-// Escuchar el boton de prueba cuando el HTML cargue
-document.getElementById('btn-test-api').addEventListener('click', probarConexion);
