@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const UserModel = require('../modelo/UserModel');
+const UserModel = require('../modelo/userModel');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secreto-super-inseguro-cambia-esto';
 
@@ -30,4 +30,12 @@ async function authMiddleware(req, res, next) {
   }
 }
 
-module.exports = { authMiddleware };
+// Middleware para rutas solo de administrador
+function requireAdmin(req, res, next) {
+  if (!req.user || req.user.rol !== 'admin') {
+    return res.status(403).json({ message: 'Requiere permisos de administrador' });
+  }
+  next();
+}
+
+module.exports = { authMiddleware, requireAdmin };
