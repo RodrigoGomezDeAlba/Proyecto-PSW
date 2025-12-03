@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const mysql = require('mysql2'); 
-const bcrypt = require('bcryptjs');
+
 const authRoutes = require('./routes/auth.routes'); 
 
 const app = express();
