@@ -14,6 +14,16 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+//Aqui conectaremos la BD
+const db = mysql.createConnection(process.env.DATABASE_URL || '');
+
+app.get('/api/test', (req, res) => {
+    res.json({
+        mensaje: "Backend conectado exitosamente",
+        fecha: new Date().toISOString()
+    });
+});
+
 // Rutas del backend
 app.use('/api/auth', authRoutes);
 app.use('/api', productosRoutes);
