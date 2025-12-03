@@ -9,7 +9,7 @@ async function probarConexion() {
 
     try {
         // Hacemos la peticion de prueba que creamos en el back
-        const respuesta = await fetch(`${API_URL}/api/test`);
+        const respuesta = await fetch(`${API_URL}/api/test-db`);
 
         if (!respuesta.ok) {
             throw new Error(`Error del servidor: ${respuesta.status}`);
