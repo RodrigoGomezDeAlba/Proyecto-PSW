@@ -3,7 +3,7 @@ const pool = require('../db/conexion');
 // Buscar usuario por email
 async function findByEmail(email) {
   const [rows] = await pool.query(
-    'SELECT id, name, email, password, role FROM users WHERE email = ?',
+    'SELECT id, nombre, email, contrasena, rol FROM users WHERE email = ?',
     [email],
   );
   return rows[0]; // puede ser undefined si no existe
@@ -19,26 +19,34 @@ async function existsByEmail(email) {
 }
 
 // Crear usuario nuevo
-async function createUser(name, email, passwordHash, role = 'user') {
+async function createUser(nombre, email, hashContrasena, rol = 'usuario') {
   const [result] = await pool.query(
-    'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
-    [name, email, passwordHash, role],
+    'INSERT INTO users (nombre, email, contrasena, rol) VALUES (?, ?, ?, ?)',
+    [nombre, email, hashContrasena, rol],
   );
   return {
     id: result.insertId,
-    name,
+    nombre,
     email,
-    role,
+    rol,
   };
 }
 
 // Buscar usuario por id (para /me y middleware)
 async function findById(id) {
   const [rows] = await pool.query(
-    'SELECT id, name, email, role FROM users WHERE id = ?',
+    'SELECT id, nombre, email, rol FROM users WHERE id = ?',
     [id],
   );
   return rows[0];
+}
+
+// Actualizar la contraseña de un usuario
+async function updatePassword(id, hashContrasena) {
+  await pool.query(
+    'UPDATE users SET contrasena = ? WHERE id = ?',
+    [hashContrasena, id],
+  );
 }
 
 module.exports = {
@@ -46,4 +54,5 @@ module.exports = {
   existsByEmail,
   createUser,
   findById,
+  updatePassword,
 };
