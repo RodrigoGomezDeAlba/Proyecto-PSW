@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const UserModel = require('../modelo/UserModel');
+const UserModel = require('../modelo/userModel');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secreto-super-inseguro-cambia-esto';
 const SALT_ROUNDS = 10;
