@@ -10,6 +10,8 @@
 </head>
 
 <body>
+    
+    
     <header class="header">
         <div class="logo">Tienda (falta logo)</div>
 
@@ -40,6 +42,18 @@
         <button id="texto-reducir">-</button>
     </div>
 
+    <div style="border: 2px dashed #ccc; padding: 20px; margin: 20px 0; text-align: center;">
+        <h2>Prueba de Comunicación Cliente-Servidor</h2>
+        <p>Presiona el botón para verificar que el Frontend (Vercel) alcanza al Backend (Render).</p>
+        
+        <button id="btn-test-api" style="padding: 10px 20px; cursor: pointer; font-size: 16px;">
+            Probar Conexión
+        </button>
+
+        <div id="resultado-test" style="margin-top: 15px; font-weight: bold;"></div>
+    </div>
+    
     <script src="js/accesibilidad.js"></script>
+    <script src="js/api.js"></script>
 </body>
 </html>
