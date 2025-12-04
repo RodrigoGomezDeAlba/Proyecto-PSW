@@ -1,17 +1,17 @@
-document.addEventListener("DOMContentLoaded", ()=>{
-  if (!localStorage.getItem("productos-demo")) {
-    const demo = [
-      {id:1,nombre:"Producto A1",descripcion:"Desc A1",precio:120,stock:10,categoria:"Cat1",oferta:false},
-      {id:2,nombre:"Producto A2",descripcion:"Desc A2",precio:220,stock:0,categoria:"Cat1",oferta:true},
-      {id:3,nombre:"Producto B1",descripcion:"Desc B1",precio:80,stock:5,categoria:"Cat2",oferta:false},
-      {id:4,nombre:"Producto B2",descripcion:"Desc B2",precio:95,stock:7,categoria:"Cat2",oferta:true},
-      {id:5,nombre:"Producto C1",descripcion:"Desc C1",precio:150,stock:3,categoria:"Cat3",oferta:false},
-      {id:6,nombre:"Producto C2",descripcion:"Desc C2",precio:60,stock:20,categoria:"Cat3",oferta:true},
-      {id:7,nombre:"Producto A3",descripcion:"Desc",precio:70,stock:12,categoria:"Cat1",oferta:false},
-      {id:8,nombre:"Producto B3",descripcion:"Desc",precio:55,stock:9,categoria:"Cat2",oferta:false}
-    ];
-    localStorage.setItem("productos-demo", JSON.stringify(demo));
-    localStorage.setItem("productos", JSON.stringify(demo));
+import { apiFetch, apiGetCart } from "./api.js";
+
+document.addEventListener("DOMContentLoaded", async ()=>{
+  try {
+    // 1) Cargar productos  del backend
+    const productos = await apiFetch("/api/products");
+    // productos viene con campos: id, nombre, descripcion, categoria, precio, inventario, imagen_url
+    const adaptados = productos.map(p => ({
+      ...p,
+      stock: p.inventario
+    }));
+    localStorage.setItem("productos", JSON.stringify(adaptados));
+  } catch (err) {
+    console.error("Error cargando productos desde el backend", err);
   }
 
   actualizarBadge();
@@ -24,10 +24,22 @@ function obtenerProductosLS(){
   return JSON.parse(localStorage.getItem("productos") || "[]");
 }
 
-function actualizarBadge(){
-  const carrito = JSON.parse(localStorage.getItem("carrito") || "[]");
-  const count = carrito.reduce((s,i)=> s + i.qty,0);
-  document.querySelectorAll("#badge-count, #badge-count-2").forEach(el=> el.textContent = count);
+async function actualizarBadge(){
+  try {
+    // para que lo tome del backend
+    const items = await apiGetCart();  // cada item tiene 'cantidad'
+    const count = items.reduce((s, it) => s + (it.cantidad || 0), 0);
+
+    document
+      .querySelectorAll("#badge-count, #badge-count-2")
+      .forEach(el => el.textContent = count);
+  } catch (err) {
+    console.error("Error cargando carrito para badge:", err);
+    // Si hay error  mostramos 0
+    document
+      .querySelectorAll("#badge-count, #badge-count-2")
+      .forEach(el => el.textContent = "0");
+  }
 }
 
 function cargarDestacados(){

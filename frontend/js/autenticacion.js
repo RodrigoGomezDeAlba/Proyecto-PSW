@@ -16,7 +16,7 @@ export async function registrarUsuario(event) {
         return;
     }
 
-    const resp = await fetch(`${API_URL}/api/auth/registro`, {
+    const resp = await fetch(`${API_URL}/api/auth/register`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(datos)
@@ -67,7 +67,7 @@ export async function enviarRecuperacion(event) {
 
     const email = document.getElementById("email").value;
 
-    const resp = await fetch(`${API_URL}/api/auth/recuperar`, {
+    const resp = await fetch(`${API_URL}/api/auth/forgot-password`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({ email })
