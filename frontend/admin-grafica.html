@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Inventario por categoría</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 20px;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    #contenedor-grafica {
+      max-width: 900px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Inventario por categoría</h1>
+
+  <div id="contenedor-grafica">
+    <!-- MUY IMPORTANTE: este canvas es donde dibuja Chart.js -->
+    <canvas id="inventarioChart" width="800" height="400"></canvas>
+  </div>
+
+  <!-- Librería de Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Nuestro JS (módulo) -->
+  <script type="module" src="js/admin-grafica.js"></script>
+</body>
+</html>
