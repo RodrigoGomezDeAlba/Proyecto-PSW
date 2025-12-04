@@ -72,7 +72,7 @@ async function crearOrdenDesdeCarrito(usuarioId) {
 // Listar órdenes de un usuario
 async function obtenerOrdenesPorUsuario(usuarioId) {
   const [rows] = await pool.query(
-    'SELECT id, total, estado, creada_en FROM ordenes WHERE usuario_id = ? ORDER BY creada_en DESC',
+    'SELECT id, total, estado FROM ordenes WHERE usuario_id = ? ORDER BY creada_en DESC',
     [usuarioId],
   );
   return rows;
@@ -81,7 +81,7 @@ async function obtenerOrdenesPorUsuario(usuarioId) {
 // Obtener una orden con sus items
 async function obtenerOrdenConItems(ordenId, usuarioId) {
   const [ordenRows] = await pool.query(
-    'SELECT id, usuario_id, total, estado, creada_en FROM ordenes WHERE id = ? AND usuario_id = ?',
+    'SELECT id, usuario_id, total, estado FROM ordenes WHERE id = ? AND usuario_id = ?',
     [ordenId, usuarioId],
   );
 

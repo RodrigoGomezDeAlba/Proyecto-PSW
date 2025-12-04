@@ -2,7 +2,12 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const mysql = require('mysql2'); 
+
+// ❌ YA NO NECESITAMOS ESTO
+// const mysql = require('mysql2'); 
+
+// ✅ Usa el pool de conexion.js
+const pool = require('./db/conexion');
 
 const authRoutes = require('./routes/auth.routes'); 
 const carritoRoutes = require('./routes/carrito.routes');
@@ -24,25 +29,27 @@ app.use('/api', ordenesRoutes);
 app.use('/api', suscripcionRoutes); 
 app.use('/api', adminRoutes);
 
-// Conexion a la base
-const db = mysql.createConnection(process.env.DATABASE_URL || '');
+// ❌ Elimina / comenta este bloque viejo:
+// const db = mysql.createConnection(process.env.DATABASE_URL || '');
+// db.connect(...)
 
-db.connect((err) => {
-    if (err) {
-        console.error("Error grave conectando a la BD:", err.message);
-    } else {
-        console.log("Conexion exitosa a la Base de Datos MySQL");
-    }
-});
-
-// Prueba base
-app.get('/api/test-db', (req, res) => {
-    db.query('SELECT 1 + 1 AS resultado', (err, results) => {
-        if (err) {
-            return res.status(500).json({ status: 'error', mensaje: 'Error en BD', detalle: err.message });
-        }
-        res.json({ status: 'success', mensaje: '¡Conexión DB Exitosa!', calculo: results[0].resultado });
+// ✅ Ruta de prueba usando el pool
+app.get('/api/test-db', async (req, res) => {
+  try {
+    const [rows] = await pool.query('SELECT 1 + 1 AS resultado');
+    res.json({
+      status: 'success',
+      mensaje: '¡Conexión DB Exitosa!',
+      calculo: rows[0].resultado,
     });
+  } catch (err) {
+    console.error('Error en /api/test-db:', err);
+    res.status(500).json({
+      status: 'error',
+      mensaje: 'Error en BD',
+      detalle: err.message,
+    });
+  }
 });
 
 app.get('/', (req, res) => {
