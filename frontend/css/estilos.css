@@ -224,6 +224,20 @@ a {
   color: #fff;
 }
 
+.product-img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover .product-img {
+  transform: scale(1.03);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+}
+
 body.tema-oscuro .card,
 body.tema-oscuro .filtros,
 body.tema-oscuro #resumen-compra,

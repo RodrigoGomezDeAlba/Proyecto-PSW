@@ -94,6 +94,7 @@ function cargarDestacados(){
     card.className = "card";
     const enWishlist = isInWishlist(p.id);
     card.innerHTML = `
+      <img class="product-img" src="${p.imagen_url || 'img/botella-placeholder.png'}" alt="${p.nombre}">
       <h4>${p.nombre} ${p.stock===0?'<span style="color:red">(Sin stock)</span>':''}</h4>
       <p>${p.descripcion || ""}</p>
       <p><strong>$${p.precio.toFixed(2)}</strong></p>
@@ -180,6 +181,7 @@ function renderCatalogo(){
     card.className = "card";
     const enWishlist = isInWishlist(p.id);
     card.innerHTML = `
+      <img class="product-img" src="${p.imagen_url || 'img/botella-placeholder.png'}" alt="${p.nombre}">
       <h4>${p.nombre} ${p.stock===0?'<span style="color:red">(Sin stock)</span>':''}</h4>
       <p>${p.descripcion || ""}</p>
       <p><strong>$${p.precio.toFixed(2)}</strong></p>
