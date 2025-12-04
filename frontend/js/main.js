@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
   cargarDestacados();
   poblarFiltroCategorias();
   initCatalogoPage();
+  initWishlistPage();
 });
 
 function obtenerProductosLS(){
@@ -30,6 +31,59 @@ function actualizarBadge(){
   document.querySelectorAll("#badge-count, #badge-count-2").forEach(el=> el.textContent = count);
 }
 
+function getUserWishlistKey(){
+  const email = localStorage.getItem("usuarioEmail") || "anonimo";
+  return "wishlist_" + email;
+}
+
+function getWishlist(){
+  const key = getUserWishlistKey();
+  try {
+    return JSON.parse(localStorage.getItem(key) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function saveWishlist(list){
+  const key = getUserWishlistKey();
+  localStorage.setItem(key, JSON.stringify(list));
+}
+
+function isInWishlist(id){
+  const list = getWishlist();
+  return list.includes(id);
+}
+
+function toggleWishlist(id){
+  const token = localStorage.getItem("token");
+  if (!token) {
+    if (typeof Swal !== "undefined") {
+      Swal.fire({
+        icon: 'info',
+        title: 'Inicia sesión',
+        text: 'Debes iniciar sesión para usar la lista de deseos.',
+        confirmButtonText: 'Ir a login'
+      }).then(() => {
+        window.location.href = 'login.html';
+      });
+    } else {
+      alert('Debes iniciar sesión para usar la lista de deseos.');
+      window.location.href = 'login.html';
+    }
+    return;
+  }
+
+  const list = getWishlist();
+  const idx = list.indexOf(id);
+  if (idx >= 0) {
+    list.splice(idx,1);
+  } else {
+    list.push(id);
+  }
+  saveWishlist(list);
+}
+
 function cargarDestacados(){
   const productos = obtenerProductosLS();
   const cont = document.getElementById("destacados");
@@ -38,15 +92,31 @@ function cargarDestacados(){
   productos.slice(0,4).forEach(p=>{
     const card = document.createElement("div");
     card.className = "card";
-    card.innerHTML = `<h4>${p.nombre} ${p.stock===0?'<span style="color:red">(Sin stock)</span>':''}</h4>
+    const enWishlist = isInWishlist(p.id);
+    card.innerHTML = `
+      <h4>${p.nombre} ${p.stock===0?'<span style="color:red">(Sin stock)</span>':''}</h4>
       <p>${p.descripcion || ""}</p>
       <p><strong>$${p.precio.toFixed(2)}</strong></p>
-      <button class="btn agregar" data-id="${p.id}" ${p.stock===0?"disabled":""}>Agregar</button>`;
+      <div class="card-actions">
+        <button class="btn agregar" data-id="${p.id}" ${p.stock===0?"disabled":""}>Agregar</button>
+        <button class="btn-wish ${enWishlist?"active":""}" data-id="${p.id}" aria-label="Lista de deseos">
+          ${enWishlist ? "♥" : "♡"}
+        </button>
+      </div>`;
     cont.appendChild(card);
   });
+
   cont.querySelectorAll(".agregar").forEach(b=> b.addEventListener("click", e=>{
     const id = parseInt(e.target.dataset.id);
     agregarAlCarrito(id,1);
+  }));
+
+  cont.querySelectorAll(".btn-wish").forEach(b=> b.addEventListener("click", e=>{
+    const id = parseInt(e.currentTarget.dataset.id);
+    toggleWishlist(id);
+    const enWishlist = isInWishlist(id);
+    e.currentTarget.classList.toggle("active", enWishlist);
+    e.currentTarget.textContent = enWishlist ? "♥" : "♡";
   }));
 }
 
@@ -108,16 +178,82 @@ function renderCatalogo(){
   filtrados.forEach(p=>{
     const card = document.createElement("div");
     card.className = "card";
-    card.innerHTML = `<h4>${p.nombre} ${p.stock===0?'<span style="color:red">(Sin stock)</span>':''}</h4>
+    const enWishlist = isInWishlist(p.id);
+    card.innerHTML = `
+      <h4>${p.nombre} ${p.stock===0?'<span style="color:red">(Sin stock)</span>':''}</h4>
       <p>${p.descripcion || ""}</p>
       <p><strong>$${p.precio.toFixed(2)}</strong></p>
       <p>Stock: ${p.stock}</p>
-      <button class="btn agregar" data-id="${p.id}" ${p.stock===0?"disabled":""}>Agregar</button>`;
+      <div class="card-actions">
+        <button class="btn agregar" data-id="${p.id}" ${p.stock===0?"disabled":""}>Agregar</button>
+        <button class="btn-wish ${enWishlist?"active":""}" data-id="${p.id}" aria-label="Lista de deseos">
+          ${enWishlist ? "♥" : "♡"}
+        </button>
+      </div>`;
     cont.appendChild(card);
   });
 
   cont.querySelectorAll(".agregar").forEach(b=> b.addEventListener("click", e=>{
     const id = parseInt(e.target.dataset.id);
     agregarAlCarrito(id,1);
+  }));
+
+  cont.querySelectorAll(".btn-wish").forEach(b=> b.addEventListener("click", e=>{
+    const id = parseInt(e.currentTarget.dataset.id);
+    toggleWishlist(id);
+    const enWishlist = isInWishlist(id);
+    e.currentTarget.classList.toggle("active", enWishlist);
+    e.currentTarget.textContent = enWishlist ? "♥" : "♡";
+  }));
+}
+
+function initWishlistPage(){
+  const cont = document.getElementById("wishlist-list");
+  if (!cont) return;
+
+  const productos = obtenerProductosLS();
+  const ids = getWishlist();
+
+  cont.innerHTML = "";
+
+  if (!ids.length){
+    cont.innerHTML = "<p>No tienes productos en tu lista de deseos.</p>";
+    return;
+  }
+
+  const deseados = productos.filter(p=> ids.includes(p.id));
+
+  if (!deseados.length){
+    cont.innerHTML = "<p>Los productos de tu lista ya no están disponibles.</p>";
+    return;
+  }
+
+  deseados.forEach(p=>{
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <h4>${p.nombre} ${p.stock===0?'<span style="color:red">(Sin stock)</span>':''}</h4>
+      <p>${p.descripcion || ""}</p>
+      <p><strong>$${p.precio.toFixed(2)}</strong></p>
+      <p>Stock: ${p.stock}</p>
+      <div class="card-actions">
+        <button class="btn agregar" data-id="${p.id}" ${p.stock===0?"disabled":""}>Agregar al carrito</button>
+        <button class="btn-wish active" data-id="${p.id}" aria-label="Quitar de lista de deseos">♥</button>
+      </div>`;
+    cont.appendChild(card);
+  });
+
+  cont.querySelectorAll(".agregar").forEach(b=> b.addEventListener("click", e=>{
+    const id = parseInt(e.target.dataset.id);
+    agregarAlCarrito(id,1);
+  }));
+
+  cont.querySelectorAll(".btn-wish").forEach(b=> b.addEventListener("click", e=>{
+    const id = parseInt(e.currentTarget.dataset.id);
+    toggleWishlist(id);
+    e.currentTarget.closest(".card").remove();
+    if (!getWishlist().length){
+      cont.innerHTML = "<p>No tienes productos en tu lista de deseos.</p>";
+    }
   }));
 }

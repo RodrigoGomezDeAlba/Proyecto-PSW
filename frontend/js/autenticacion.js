@@ -58,6 +58,12 @@ export async function iniciarSesion(event) {
 
     guardarToken(data.token);
 
+    if (data.usuario && data.usuario.email) {
+        localStorage.setItem("usuarioEmail", data.usuario.email);
+    } else {
+        localStorage.setItem("usuarioEmail", datos.email);
+    }
+
     alert("Bienvenido");
     window.location.href = "index.html";
 }
