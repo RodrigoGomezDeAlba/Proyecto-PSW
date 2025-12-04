@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BotellonesMX - Contacto</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="css/estilos.css">
+  <link rel="stylesheet" href="css/accesibilidad.css">
+</head>
+<body>
+  <header class="header">
+    <div class="logo"><a href="index.html">BotellonesMX</a></div>
+    <nav class="menu">
+      <a href="index.html">Inicio</a>
+      <a href="productos.html">Productos</a>
+      <a href="nosotros.html">Nosotros</a>
+      <a href="faq.html">Preguntas</a>
+      <a href="contacto.html">Contacto</a>
+      <a href="carrito.html">Carrito <span id="badge-count-2">0</span></a>
+      <a href="login.html">Login</a>
+    </nav>
+  </header>
+
+  <main class="contenido">
+    <h1>Contacto</h1>
+
+    <form id="contact-form">
+      <label>Nombre
+        <input type="text" name="nombre" required>
+      </label>
+      <label>Email
+        <input type="email" name="email" required>
+      </label>
+      <label>Asunto
+        <input type="text" name="asunto" required>
+      </label>
+      <label>Mensaje
+        <textarea name="mensaje" required></textarea>
+      </label>
+      <button type="submit" class="btn">Enviar</button>
+    </form>
+  </main>
+
+  <footer class="footer">
+    <p>© 2025 BotellonesMX - Proyecto académico</p>
+  </footer>
+
+  <div id="accesibilidad-btn">♿</div>
+  <div id="panel-accesibilidad" class="oculto">
+    <h3>Accesibilidad</h3>
+    <button id="tema-toggle">Modo claro / oscuro</button>
+    <button id="texto-aumentar">Aumentar texto</button>
+    <button id="texto-reducir">Reducir texto</button>
+  </div>
+
+  <script src="js/accesibilidad.js"></script>
+  <script src="js/contacto.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BotellonesMX - Productos</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <link rel="stylesheet" href="css/estilos.css">
+  <link rel="stylesheet" href="css/accesibilidad.css">
+  <link rel="stylesheet" href="css/productos.css">
+</head>
+<body>
+  <header class="header">
+    <div class="logo"><a href="index.html">BotellonesMX</a></div>
+    <nav class="menu">
+      <a href="index.html">Inicio</a>
+      <a href="productos.html">Productos</a>
+      <a href="nosotros.html">Nosotros</a>
+      <a href="faq.html">Preguntas</a>
+      <a href="contacto.html">Contacto</a>
+      <a href="carrito.html">Carrito <span id="badge-count-2">0</span></a>
+      <a href="login.html">Login</a>
+    </nav>
+  </header>
+
+  <main class="contenido">
+    <h1>Catálogo</h1>
+
+    <aside class="filtros">
+      <h2>Filtros</h2>
+
+      <label>
+        Categoría
+        <select id="filtro-categoria">
+          <option value="todos">Todos</option>
+        </select>
+      </label>
+
+      <label>
+        Rango de precio
+        <input id="precio-min" type="number" placeholder="Mínimo" />
+        <input id="precio-max" type="number" placeholder="Máximo" />
+      </label>
+
+      <label class="check-inline">
+        <input id="solo-oferta" type="checkbox" />
+        Solo en oferta
+      </label>
+
+      <button id="aplicar-filtro" class="btn">Aplicar filtros</button>
+    </aside>
+
+    <section id="catalogo" class="grilla"></section>
+  </main>
+
+  <footer class="footer">
+    <p>© 2025 BotellonesMX - Proyecto académico</p>
+  </footer>
+
+  <div id="accesibilidad-btn">♿</div>
+  <div id="panel-accesibilidad" class="oculto">
+    <h3>Accesibilidad</h3>
+    <button id="tema-toggle">Modo claro / oscuro</button>
+    <button id="texto-aumentar">Aumentar texto</button>
+    <button id="texto-reducir">Reducir texto</button>
+  </div>
+
+  <script src="js/accesibilidad.js"></script>
+  <script src="js/tienda.js"></script>
+  <script src="js/carrito.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

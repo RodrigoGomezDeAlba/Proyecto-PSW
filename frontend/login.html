@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>BotellonesMX - Login</title>
+
+    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" href="css/accesibilidad.css">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="logo"><a href="index.html">BotellonesMX</a></div>
+        <nav class="menu">
+            <a href="index.html">Inicio</a>
+            <a href="productos.html">Productos</a>
+            <a href="nosotros.html">Nosotros</a>
+            <a href="faq.html">Preguntas</a>
+            <a href="contacto.html">Contacto</a>
+            <a href="carrito.html">Carrito <span id="badge-count-2">0</span></a>
+            <a href="registro.html">Registrarse</a>
+        </nav>
+    </header>
+
+    <main class="contenido auth-page">
+        <section class="auth-wrapper">
+            <div class="auth-card">
+                <h1>Iniciar sesión</h1>
+                <p class="auth-subtitle">Accede con tu correo y contraseña para continuar con tu compra.</p>
+
+                <form id="form-login">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="tu@correo.com" required>
+
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" placeholder="********" required>
+
+                    <div id="captcha-container" class="captcha-box">
+                        <!--Falta captcha-->
+                    </div>
+
+                    <button type="submit" class="btn">Entrar</button>
+
+                    <p class="auth-footer-text">
+                        ¿No tienes cuenta?
+                        <a href="registro.html">Crear cuenta</a>
+                    </p>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>© 2025 BotellonesMX - Proyecto académico</p>
+    </footer>
+
+    <div id="accesibilidad-btn">♿</div>
+    <div id="panel-accesibilidad" class="oculto">
+        <h3>Accesibilidad</h3>
+        <button id="tema-toggle">Modo claro / oscuro</button>
+        <button id="texto-aumentar">Aumentar texto</button>
+        <button id="texto-reducir">Reducir texto</button>
+    </div>
+
+    <script src="js/accesibilidad.js"></script>
+    <script src="js/autenticacion.js"></script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BotellonesMX - Preguntas frecuentes</title>
+  <link rel="stylesheet" href="css/estilos.css">
+  <link rel="stylesheet" href="css/accesibilidad.css">
+</head>
+<body>
+  <header class="header">
+    <div class="logo"><a href="index.html">BotellonesMX</a></div>
+    <nav class="menu">
+      <a href="index.html">Inicio</a>
+      <a href="productos.html">Productos</a>
+      <a href="nosotros.html">Nosotros</a>
+      <a href="faq.html">Preguntas</a>
+      <a href="contacto.html">Contacto</a>
+      <a href="carrito.html">Carrito <span id="badge-count-2">0</span></a>
+      <a href="login.html">Login</a>
+    </nav>
+  </header>
+
+  <main class="contenido">
+    <section class="hero">
+      <h1>Preguntas frecuentes</h1>
+      <p class="muted">Aquí respondemos las dudas más comunes sobre el funcionamiento de BotellonesMX.</p>
+    </section>
+
+    <section class="faq-list">
+      <article class="card">
+        <h3>¿Este sitio es una tienda real?</h3>
+        <p>
+          No. BotellonesMX es un proyecto académico que simula el funcionamiento de una tienda en línea.
+          Los productos, precios y compras son de demostración.
+        </p>
+      </article>
+
+      <article class="card">
+        <h3>¿Cómo agrego productos al carrito?</h3>
+        <p>
+          Desde la sección <strong>Productos</strong> puedes ver el catálogo y usar el botón
+          “Agregar” en cada tarjeta. El ícono de carrito en el menú mostrará la cantidad de
+          artículos agregados.
+        </p>
+      </article>
+
+      <article class="card">
+        <h3>¿Qué pasa al “pagar” una compra?</h3>
+        <p>
+          El proceso de pago está simulado. Al finalizar la compra, se genera una nota o comprobante
+          que puedes imprimir, y se actualiza el inventario local de los productos.
+        </p>
+      </article>
+
+      <article class="card">
+        <h3>¿Mis datos se guardan en algún servidor?</h3>
+        <p>
+          Para fines académicos, parte de la información puede enviarse a un backend de prueba.
+          Sin embargo, no se utiliza para transacciones reales ni pagos con dinero.
+        </p>
+      </article>
+
+      <article class="card">
+        <h3>¿Puedo cambiar el tamaño del texto o el tema?</h3>
+        <p>
+          Sí. En la esquina inferior derecha verás un botón de accesibilidad (♿). Desde ahí puedes
+          activar modo claro/oscuro y ajustar el tamaño del texto.
+        </p>
+      </article>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© 2025 BotellonesMX - Proyecto académico</p>
+  </footer>
+
+  <div id="accesibilidad-btn">♿</div>
+  <div id="panel-accesibilidad" class="oculto">
+    <h3>Accesibilidad</h3>
+    <button id="tema-toggle">Modo claro / oscuro</button>
+    <button id="texto-aumentar">Aumentar texto</button>
+    <button id="texto-reducir">Reducir texto</button>
+  </div>
+
+  <script src="js/accesibilidad.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
