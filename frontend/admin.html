@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BotellonesMX - Panel Admin</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <link rel="stylesheet" href="css/estilos.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="css/accesibilidad.css">
+</head>
+
+<body>
+  <header class="header">
+    <div class="logo"><a href="index.html">BotellonesMX</a></div>
+
+    <nav class="menu">
+      <a href="index.html">Tienda</a>
+      <a href="productos.html">Productos</a>
+      <a href="carrito.html">Carrito</a>
+      <a href="login.html">Login</a>
+    </nav>
+  </header>
+
+  <main class="contenido admin-page">
+    <section class="admin-header">
+      <div>
+        <h1>Panel de administración</h1>
+        <p class="muted">Administra productos, inventario y revisa un resumen de ventas simuladas.</p>
+      </div>
+      <div class="admin-badge">
+        <span class="tag">Modo demo</span>
+      </div>
+    </section>
+
+    <section class="admin-grid">
+      <section class="admin-block">
+        <h2>Productos</h2>
+        <p class="muted small">Aquí se muestran los productos almacenados localmente (localStorage).</p>
+        <div id="lista-productos" class="admin-product-list">
+          </div>
+      </section>
+
+      <aside class="admin-block admin-form-block">
+        <h2>Nuevo / editar producto</h2>
+        <form id="form-producto" class="admin-form">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" name="nombre" required>
+
+          <label for="categoria">Categoría</label>
+          <input type="text" id="categoria" name="categoria" required>
+
+          <label for="precio">Precio</label>
+          <input type="number" id="precio" name="precio" step="0.01" min="0" required>
+
+          <label for="inventario">Inventario (stock)</label>
+          <input type="number" id="inventario" name="inventario" min="0" required>
+
+          <label class="inline">
+            <input type="checkbox" id="oferta" name="oferta">
+            Producto en oferta
+          </label>
+
+          <button type="submit" class="btn">Guardar producto</button>
+        </form>
+
+        <p class="muted xsmall">
+          Al editar un producto, se cargan sus datos en el formulario. Al guardar, se actualiza la lista.
+        </p>
+      </aside>
+    </section>
+
+    <section class="admin-stats">
+      <div class="admin-stats-header">
+        <div>
+          <h2>Ventas simuladas por categoría</h2>
+          <p class="muted small">
+            Los valores se calculan de forma aleatoria a partir de los productos actuales,
+            solo para fines de demostración.
+          </p>
+        </div>
+        <div class="admin-total">
+          <span>Total estimado:</span>
+          <strong>$<span id="ventas-total">0</span></strong>
+        </div>
+      </div>
+
+      <div class="admin-chart-wrapper">
+        <canvas id="grafica-ventas" width="700" height="280"></canvas>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© 2025 BotellonesMX - Panel de administración (demo)</p>
+  </footer>
+
+  <div id="accesibilidad-btn">♿</div>
+  <div id="panel-accesibilidad" class="oculto">
+    <h3>Accesibilidad</h3>
+    <button id="tema-toggle">Modo claro / oscuro</button>
+    <button id="texto-aumentar">Aumentar texto</button>
+    <button id="texto-reducir">Reducir texto</button>
+  </div>
+
+  <script src="js/accesibilidad.js"></script>
+  <script src="js/tienda.js"></script>   <!-- obtenerProductos / agregarProducto / eliminarProducto -->
+  <script src="js/admin.js"></script>
+</body>
+</html>

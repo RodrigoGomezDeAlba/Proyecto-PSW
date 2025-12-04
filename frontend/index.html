@@ -1,48 +1,60 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tienda en Línea</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BotellonesMX - Inicio</title>
 
-    <link rel="stylesheet" href="css/estilos.css">
-    <link rel="stylesheet" href="css/accesibilidad.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <link rel="stylesheet" href="css/estilos.css">
+  <link rel="stylesheet" href="css/accesibilidad.css">
 </head>
-
 <body>
-    
-    
-    <header class="header">
-        <div class="logo">Tienda (falta logo)</div>
+  <header class="header">
+    <div class="logo"><a href="index.html">BotellonesMX</a></div>
+    <nav class="menu">
+      <a href="index.html">Inicio</a>
+      <a href="productos.html">Productos</a>
+      <a href="nosotros.html">Nosotros</a>
+      <a href="faq.html">Preguntas</a>
+      <a href="contacto.html">Contacto</a>
+      <a href="carrito.html">Carrito <span id="badge-count">0</span></a>
+      <a href="login.html">Login</a>
+    </nav>
+    <p id="usuarioHeader"></p>
+    <button id="logoutBtn" class="oculto">Cerrar sesión</button>
+  </header>
 
-        <nav class="menu">
-            <a href="index.html">Inicio</a>
-            <a href="nosotros.html">Nosotros</a>
-            <a href="faq.html">Preguntas</a>
-            <a href="contacto.html">Contacto</a>
-        </nav>
-    </header>
+  <main class="contenido">
+    <section class="hero">
+      <h1>Bienvenido a BotellonesMX</h1>
+      <p>Proyecto académico - Tienda en línea</p>
+      <a class="btn" href="productos.html">Ver productos</a>
+    </section>
 
-    <main class="contenido">
-        <h1>Nombre tienda</h1>
-        <p>Contenido</p>
-    </main>
+    <section>
+      <h2>Destacados</h2>
+      <div id="destacados" class="grilla"></div>
+    </section>
+  </main>
 
-    <footer class="footer">
-        <p>Tienda - Proyecto académico</p>
-        <p>Redes (faltan iconos)</p>
-    </footer>
+  <footer class="footer">
+    <p>© 2025 BotellonesMX - Proyecto académico</p>
+    <p>Redes: (iconos pendientes)</p>
+  </footer>
 
-    <div id="accesibilidad-btn">Opc Acc</div>
+  <div id="accesibilidad-btn">♿</div>
+  <div id="panel-accesibilidad" class="oculto">
+    <h3>Accesibilidad</h3>
+    <button id="tema-toggle">Modo claro / oscuro</button>
+    <button id="texto-aumentar">Aumentar texto</button>
+    <button id="texto-reducir">Reducir texto</button>
+  </div>
 
-    <div id="panel-accesibilidad" class="oculto">
-        <h3>Accesibilidad</h3>
-        <button id="tema-toggle">Cambiar tema</button>
-        <button id="texto-aumentar">+</button>
-        <button id="texto-reducir">-</button>
-    </div>
-
-    <script src="js/accesibilidad.js"></script>
-    <script src="js/api.js"></script>
+  <script src="js/accesibilidad.js"></script>
+  <script src="js/tienda.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/carrito.js"></script>
 </body>
 </html>

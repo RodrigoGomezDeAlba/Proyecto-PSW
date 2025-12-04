@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BotellonesMX - Sobre nosotros</title>
+  <link rel="stylesheet" href="css/estilos.css">
+  <link rel="stylesheet" href="css/accesibilidad.css">
+</head>
+<body>
+  <header class="header">
+    <div class="logo"><a href="index.html">BotellonesMX</a></div>
+    <nav class="menu">
+      <a href="index.html">Inicio</a>
+      <a href="productos.html">Productos</a>
+      <a href="nosotros.html">Nosotros</a>
+      <a href="faq.html">Preguntas</a>
+      <a href="contacto.html">Contacto</a>
+      <a href="carrito.html">Carrito <span id="badge-count-2">0</span></a>
+      <a href="login.html">Login</a>
+    </nav>
+  </header>
+
+  <main class="contenido">
+    <section class="hero">
+      <h1>Sobre BotellonesMX</h1>
+      <p class="muted">Proyecto académico de tienda en línea desarrollado para practicar frontend y consumo de API.</p>
+    </section>
+
+    <section>
+      <h2>¿Como nace BotellonesMX?</h2>
+      <p>
+        BotellonesMX nace como un proyecto académico con el objetivo de simular una tienda en línea moderna,
+        enfocada en una buena experiencia de usuario, accesibilidad básica y una arquitectura sencilla
+        que se pueda entender con claridad.
+      </p>
+      <p>
+        El objetivo principal es aprender a manejar catálogos de productos, carritos de compra,
+        procesos de checkout y paneles de administración, combinando HTML, CSS y JavaScript.
+      </p>
+    </section>
+
+    <section>
+      <h2>Qué incluye este proyecto</h2>
+      <div class="grilla">
+        <article class="card">
+          <h3>Catálogo de productos</h3>
+          <p>Listado filtrable de productos, con información de precio, stock y ofertas.</p>
+        </article>
+
+        <article class="card">
+          <h3>Carrito y checkout</h3>
+          <p>Flujo básico de compra con cálculo de impuestos, envío y generación de nota de compra.</p>
+        </article>
+
+        <article class="card">
+          <h3>Panel de administración</h3>
+          <p>Sección para administrar productos, inventario y consultar información de ventas (simulada).</p>
+        </article>
+
+        <article class="card">
+          <h3>Accesibilidad básica</h3>
+          <p>Modo claro/oscuro, cambio de tamaño de fuente y un pequeño panel de accesibilidad global.</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>Sobre nosotros</h2>
+      <p>
+        En BotellonesMX nos enfocamos en poder ofrecer la mejor calidad de botellas al mejor precio. Nuestra mision es lograr un mundo
+        el cual ame las botellas tanto como nosotros lo hacemos.
+      </p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© 2025 BotellonesMX - Proyecto académico</p>
+  </footer>
+
+  <div id="accesibilidad-btn">♿</div>
+  <div id="panel-accesibilidad" class="oculto">
+    <h3>Accesibilidad</h3>
+    <button id="tema-toggle">Modo claro / oscuro</button>
+    <button id="texto-aumentar">Aumentar texto</button>
+    <button id="texto-reducir">Reducir texto</button>
+  </div>
+
+  <script src="js/accesibilidad.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
