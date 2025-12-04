@@ -3,8 +3,25 @@ function obtenerCarrito(){ return JSON.parse(localStorage.getItem("carrito") || 
 function guardarCarrito(c){ localStorage.setItem("carrito", JSON.stringify(c)); actualizarBadge(); }
 
 function agregarAlCarrito(productId, qty=1){
+  const token = localStorage.getItem("token");
+  if (!token) {
+    Swal.fire({
+      icon: 'info',
+      title: 'Inicia sesión',
+      text: 'Debes iniciar sesión para agregar productos al carrito.',
+      confirmButtonText: 'Ir a login'
+    }).then(() => {
+      window.location.href = 'login.html';
+    });
+    return;
+  }
+
   const prod = obtenerProductos().find(p=>p.id===productId);
-  if(!prod){ Swal.fire('Error','Producto no existe','error'); return; }
+  if(!prod){
+    Swal.fire('Error','Producto no existe','error');
+    return;
+  }
+
   const carrito = obtenerCarrito();
   const item = carrito.find(i=>i.id===productId);
   if(item){

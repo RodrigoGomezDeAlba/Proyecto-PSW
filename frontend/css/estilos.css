@@ -202,6 +202,28 @@ a {
   margin-top: 10px;
 }
 
+.card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  align-items: center;
+}
+
+.btn-wish {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--link);
+  background: transparent;
+  color: var(--link);
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.btn-wish.active {
+  background: var(--link);
+  color: #fff;
+}
+
 body.tema-oscuro .card,
 body.tema-oscuro .filtros,
 body.tema-oscuro #resumen-compra,
