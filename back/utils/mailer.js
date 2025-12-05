@@ -9,13 +9,13 @@ const logoPath = path.join(__dirname, '../assets/logo.png');
 
 // Transporter general
 const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,
+  host: process.env.MAIL_HOST || 'smtp.gmail.com',
+  port: process.env.MAIL_PORT ? Number(process.env.MAIL_PORT) : 587,
   secure: false,
   auth: {
     user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS
-  }
+    pass: process.env.MAIL_PASS,
+  },
 });
 
 // Verificación opcional
@@ -30,11 +30,11 @@ transporter.verify(err => {
 //función base 
 async function sendMail({ to, subject, html, attachments = [] }) {
   return transporter.sendMail({
-    from: `"${company.name}" <${process.env.MAIL_USER}>`,
+    from: process.env.MAIL_FROM || `"${company.name}" <${process.env.MAIL_USER}>`,
     to,
     subject,
     html,
-    attachments
+    attachments,
   });
 }
 
