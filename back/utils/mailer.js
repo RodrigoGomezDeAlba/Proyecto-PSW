@@ -7,36 +7,61 @@ const { company } = require('../data/company');
 // Ruta del logo 
 const logoPath = path.join(__dirname, '../assets/logo.png');
 
-// Transporter general
-const transporter = nodemailer.createTransport({
-  host: process.env.MAIL_HOST || 'smtp.gmail.com',
-  port: process.env.MAIL_PORT ? Number(process.env.MAIL_PORT) : 587,
-  secure: false,
-  auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS,
-  },
-});
+// ------------------------------------------------------------
+// SMTP opcional (solo se usa si hay configuración MAIL_*)
+// ------------------------------------------------------------
+const hasSmtpConfig =
+  process.env.MAIL_HOST && process.env.MAIL_USER && process.env.MAIL_PASS;
 
-// Verificación
-transporter.verify(err => {
+let transporter = null;
+
+if (hasSmtpConfig) {
   const host = process.env.MAIL_HOST || 'smtp.gmail.com';
-  const port = process.env.MAIL_PORT || 587;
+  const port = process.env.MAIL_PORT ? Number(process.env.MAIL_PORT) : 587;
 
-  if (err) {
-    console.error('Error con el mailer:', err, '\nHost:', host, 'Port:', port);
-  } else {
-    console.log('Mailer listo para enviar correos en', host + ':' + port);
-  }
-});
+  transporter = nodemailer.createTransport({
+    host,
+    port,
+    secure: false,
+    auth: {
+      user: process.env.MAIL_USER,
+      pass: process.env.MAIL_PASS,
+    },
+  });
+
+  // Verificación opcional (solo si SMTP está configurado)
+  transporter.verify(err => {
+    if (err) {
+      console.error('Error con el mailer:', err, '\nHost:', host, 'Port:', port);
+    } else {
+      console.log('Mailer listo para enviar correos en', host + ':' + port);
+    }
+  });
+} else {
+  console.warn(
+    'SMTP no configurado (MAIL_HOST/MAIL_USER/MAIL_PASS); se simulará el envío de correos.'
+  );
+}
 
 //función base 
 async function sendMail({ to, subject, html, attachments = [] }) {
+  if (!transporter) {
+    // En producción (Render) esto evita timeouts cuando SMTP está bloqueado
+    console.log(
+      'Simulación de envío de correo:',
+      JSON.stringify({ to, subject }, null, 2)
+    );
+    return;
+  }
+
   return transporter.sendMail({
     from: process.env.MAIL_FROM || `"${company.name}" <${process.env.MAIL_USER}>`,
     to,
     subject,
     html,
+    attachments,
+  });
+}
     attachments,
   });
 }
