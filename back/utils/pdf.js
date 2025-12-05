@@ -1,10 +1,5 @@
-// back/utils/pdf.js
 const PDFDocument = require('pdfkit');
 
-/**
- * Construye un PDF en memoria con la nota de compra.
- * Devuelve una Promise que resuelve a un Buffer.
- */
 function buildPurchasePdf({ nombre, email, items = [], total }) {
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument({ margin: 50 });

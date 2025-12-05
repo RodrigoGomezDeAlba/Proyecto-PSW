@@ -1,10 +1,9 @@
-// back/utils/mailer.js
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 const path = require('path');
-const { buildPurchasePdf } = require('./pdf'); // <-- util para generar el PDF
+const { buildPurchasePdf } = require('./pdf'); 
 
-// 🔹 Ruta del logo (AJÚSTALA si tu logo está en otro lado)
+// Ruta del logo 
 const logoPath = path.join(__dirname, '../assets/logo.png');
 
 // Transporter general
@@ -27,7 +26,7 @@ transporter.verify(err => {
   }
 });
 
-// --------- función base (la que ya usabas) ----------
+//función base 
 async function sendMail({ to, subject, html, attachments = [] }) {
   return transporter.sendMail({
     from: `"Mi Empresa" <${process.env.MAIL_USER}>`,
@@ -38,9 +37,7 @@ async function sendMail({ to, subject, html, attachments = [] }) {
   });
 }
 
-// --------- funciones específicas ----------
-
-// 1) Correo para formulario de CONTACTO
+// Correo para formulario de CONTACTO
 async function enviarCorreoContacto({ nombre, email, mensaje }) {
   const html = `
     <div style="font-family: Arial, sans-serif;">
@@ -70,7 +67,7 @@ async function enviarCorreoContacto({ nombre, email, mensaje }) {
   });
 }
 
-// 2) Correo para SUSCRIPCIÓN (con cupón como imagen adjunta)
+// Correo para SUSCRIPCIÓN (con cupón como imagen adjunta)
 async function enviarCorreoSuscripcion({ email, cuponPath }) {
   const html = `
     <div style="font-family: Arial, sans-serif;">

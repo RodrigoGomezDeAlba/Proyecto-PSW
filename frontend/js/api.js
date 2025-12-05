@@ -1,4 +1,4 @@
-export const API_URL = "http://localhost:3000";
+export const API_URL = "https://proyectopswbotellonesmx.onrender.com";
 
 export function guardarToken(token) {
     localStorage.setItem("token", token);
