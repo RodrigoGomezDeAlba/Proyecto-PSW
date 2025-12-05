@@ -1,6 +1,6 @@
 // back/controllers/ordenes.controller.js
 const OrdenModel = require('../modelo/ordenModel');
-const mailer = require('../utils/mailer'); // <- nuestro mailer con enviarCorreoCompra
+const { enviarCorreoCompraHTTP } = require('../utils/sendgrid');
 
 // POST /api/orders
 async function crearOrden(req, res) {
@@ -29,17 +29,17 @@ async function crearOrden(req, res) {
     const emailCliente =
       req.user.email || req.user.correo || null;
 
-    // 3) Enviar correo de compra con PDF (si tenemos correo)
+    // 3) Enviar correo de compra (HTTP SendGrid) si tenemos correo del cliente
     if (emailCliente) {
       try {
-        await mailer.enviarCorreoCompra({
+        await enviarCorreoCompraHTTP({
           nombre: nombreCliente,
           email: emailCliente,
           items,
-          total
+          total,
         });
       } catch (errMail) {
-        console.error('⚠️ Error al enviar correo de compra:', errMail);
+        console.error('⚠️ Error al enviar correo de compra (SendGrid):', errMail);
         // No rompemos la creación de la orden, sólo lo registramos
       }
     } else {
