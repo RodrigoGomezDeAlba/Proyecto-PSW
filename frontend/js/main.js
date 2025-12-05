@@ -160,9 +160,16 @@ function cargarDestacados() {
     card.className = "card";
 
     const enWishlist = isInWishlist(p.id);
-    const imgSrc = p.imagen_url
-      ? `${baseImg}/img/${p.imagen_url}`
-      : "img/logo.png";
+
+    let imgSrc = "img/logo.png";
+    if (p.imagen_url) {
+      // Si en BD viene ya con ruta absoluta relativa al backend (ej. /img/productos/1235.jpg)
+      if (p.imagen_url.startsWith("/")) {
+        imgSrc = `${baseImg}${p.imagen_url}`;
+      } else {
+        imgSrc = `${baseImg}/img/productos/${p.imagen_url}`;
+      }
+    }
 
     card.innerHTML = `
       <img class="product-img" src="${imgSrc}" alt="${p.nombre}">
@@ -266,17 +273,29 @@ function renderCatalogo() {
     const card = document.createElement("div");
     card.className = "card";
 
-    const imgSrc = p.imagen_url
-      ? `${baseImg}/img/${p.imagen_url}`
-      : "img/logo.png";
+    const enWishlist = isInWishlist(p.id);
+
+    let imgSrc = "img/logo.png";
+    if (p.imagen_url) {
+      if (p.imagen_url.startsWith("/")) {
+        imgSrc = `${baseImg}${p.imagen_url}`;
+      } else {
+        imgSrc = `${baseImg}/img/productos/${p.imagen_url}`;
+      }
+    }
 
     card.innerHTML = `
       <img src="${imgSrc}" alt="${p.nombre}" class="card-img" />
-      <h4>${p.nombre} ${p.stock===0?'<span style="color:red">(Sin stock)</span>':''}</h4>
+      <h4>${p.nombre} ${p.stock===0?'<span style=\"color:red\">(Sin stock)</span>':''}</h4>
       <p>${p.descripcion || ""}</p>
       <p><strong>$${p.precio.toFixed(2)}</strong></p>
       <p>Stock: ${p.stock}</p>
-      <button class="btn agregar" data-id="${p.id}" ${p.stock===0?"disabled":""}>Agregar</button>`;
+      <div class="card-actions">
+        <button class="btn agregar" data-id="${p.id}" ${p.stock===0?"disabled":""}>Agregar</button>
+        <button class="btn-wish ${enWishlist ? "active" : ""}" data-id="${p.id}" aria-label="Lista de deseos">
+          ${enWishlist ? "♥" : "♡"}
+        </button>
+      </div>`;
     cont.appendChild(card);
   });
 
@@ -386,9 +405,14 @@ function renderWishlist(cont) {
       ? '<span class="tag-oferta">En oferta</span>'
       : "";
 
-    const imgSrc = p.imagen_url
-      ? `${baseImg}/img/${p.imagen_url}`
-      : "img/logo.png";
+    let imgSrc = "img/logo.png";
+    if (p.imagen_url) {
+      if (p.imagen_url.startsWith("/")) {
+        imgSrc = `${baseImg}${p.imagen_url}`;
+      } else {
+        imgSrc = `${baseImg}/img/productos/${p.imagen_url}`;
+      }
+    }
 
     card.innerHTML = `
       <img class="product-img" src="${imgSrc}" alt="${p.nombre}">
