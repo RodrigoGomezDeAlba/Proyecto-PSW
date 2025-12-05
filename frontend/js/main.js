@@ -14,10 +14,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function cargarProductosDesdeBackend() {
   try {
     const productos = await apiFetch("/api/products");
-    // Adaptar al formato que usa el frontend
+    // Adaptar al formato que usa el frontend (asegurando tipos numéricos)
     window.PRODUCTOS = productos.map(p => ({
       ...p,
-      stock: p.inventario,
+      precio: Number(p.precio ?? 0),
+      stock: Number(p.inventario ?? 0),
       oferta: !!p.oferta,
     }));
     console.log("Productos cargados desde backend:", window.PRODUCTOS);
@@ -32,6 +33,16 @@ function obtenerProductos() {
 }
 
 async function actualizarBadge() {
+  const token = typeof obtenerToken === "function" ? obtenerToken() : null;
+
+  // Si no hay token, no llamamos al backend para evitar 401; badge en 0
+  if (!token) {
+    document
+      .querySelectorAll("#badge-count, #badge-count-2")
+      .forEach(el => (el.textContent = "0"));
+    return;
+  }
+
   try {
     const items = await apiGetCart(); // cada item tiene 'cantidad'
     const count = items.reduce((s, it) => s + (it.cantidad || 0), 0);
