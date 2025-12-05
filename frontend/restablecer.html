@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>BotellonesMX - Restablecer contraseña</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="css/estilos.css">
+  <link rel="stylesheet" href="css/accesibilidad.css">
+</head>
+<body>
+  <header class="header">
+    <div class="logo">
+      <img src="img/logo.png" alt="BotellonesMX" class="logo-img" />
+      <div>
+        <a href="index.html">BotellonesMX</a>
+        <div class="lema-sitio">no hay nada como tomar agua en una buena botella</div>
+      </div>
+    </div>
+    <nav class="menu">
+      <a href="index.html">Inicio</a>
+      <a href="productos.html">Productos</a>
+      <a href="nosotros.html">Nosotros</a>
+      <a href="faq.html">Preguntas</a>
+      <a href="contacto.html">Contacto</a>
+      <a href="wishlist.html">Wishlist</a>
+      <a href="carrito.html">Carrito <span id="badge-count">0</span></a>
+      <a href="login.html">Login</a>
+    </nav>
+  </header>
+
+  <main class="contenido auth-page">
+    <section class="auth-wrapper">
+      <div class="auth-card">
+        <h1>Restablecer contraseña</h1>
+        <p class="auth-subtitle">
+          Ingresa el <strong>código de recuperación</strong> que recibiste por correo y tu nueva contraseña.
+        </p>
+
+        <form id="form-restablecer">
+          <label for="token">Código de recuperación</label>
+          <input type="text" id="token" required placeholder="Pega aquí el código del correo" />
+
+          <label for="newPassword1">Nueva contraseña</label>
+          <input type="password" id="newPassword1" required placeholder="********" />
+
+          <label for="newPassword2">Confirmar nueva contraseña</label>
+          <input type="password" id="newPassword2" required placeholder="********" />
+
+          <button type="submit" class="btn">Guardar nueva contraseña</button>
+        </form>
+
+        <p class="auth-footer-text">
+          ¿Aún no tienes código?
+          <a href="recuperar.html">Solicitar recuperación</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <p>© 2025 BotellonesMX - Proyecto académico</p>
+      <p>Esta es una pagina de Proyecto FInal de la materia de Programacion web</p>
+      <div class="footer-social">
+        <span>Síguenos en</span>
+        <a href="https://x.com/LuisVazque77028" target="_blank" rel="noopener noreferrer" aria-label="Twitter de BotellonesMX">
+          <span class="footer-twitter-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.118-6.68-5.86 6.68H1.884l7.73-8.8L1.5 2.25h6.05l4.614 6.06 6.08-6.06zM16.35 19.83h1.833L7.755 4.698H5.79L16.35 19.83z"/>
+            </svg>
+          </span>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <div id="accesibilidad-btn">♿</div>
+  <div id="panel-accesibilidad" class="oculto">
+    <h3>Accesibilidad</h3>
+    <button id="tema-toggle">Modo claro / oscuro</button>
+    <button id="texto-aumentar">Aumentar texto</button>
+    <button id="texto-reducir">Reducir texto</button>
+  </div>
+
+  <script src="js/accesibilidad.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/autenticacion.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

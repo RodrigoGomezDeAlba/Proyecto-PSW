@@ -121,9 +121,29 @@ async function enviarCorreoCompraHTTP({ nombre, email, items = [], total }) {
   });
 }
 
+async function enviarCorreoRecuperacionHTTP({ email, token }) {
+  const html = `
+    <div style="font-family: Arial, sans-serif;">
+      <h2>${company.name} - Recuperación de contraseña</h2>
+      <p><em>"${company.slogan}"</em></p>
+      <p>Hemos recibido una solicitud para restablecer la contraseña de tu cuenta asociada a este correo.</p>
+      <p>Para completar el proceso, utiliza el siguiente código de recuperación (es válido por 1 hora):</p>
+      <p style="font-size: 1.2rem;"><strong>${token}</strong></p>
+      <p>Si tú no solicitaste este cambio, puedes ignorar este mensaje.</p>
+    </div>
+  `;
+
+  await sendWithSendGrid({
+    to: email,
+    subject: 'Recuperación de contraseña',
+    html,
+  });
+}
+
 module.exports = {
   sendWithSendGrid,
   enviarCorreoSuscripcionHTTP,
   enviarCorreoContactoHTTP,
   enviarCorreoCompraHTTP,
+  enviarCorreoRecuperacionHTTP,
 };
