@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const UserModel = require('../modelo/userModel');
+const { enviarCorreoRecuperacionHTTP } = require('../utils/sendgrid');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secreto-super-inseguro-cambia-esto';
 const SALT_ROUNDS = 10;
@@ -160,10 +161,16 @@ async function forgotPassword(req, res) {
 
     PASSWORD_RESET_TOKENS[token] = { userId: user.id, expiresAt };
 
-    // En un sistema real aquí se enviaría el token por correo electrónico
+    // Enviar el token por correo usando SendGrid HTTP
+    try {
+      await enviarCorreoRecuperacionHTTP({ email: user.email, token });
+    } catch (mailErr) {
+      console.error('Error enviando correo de recuperación:', mailErr);
+    }
+
     return res.json({
-      message: 'Se ha generado un enlace de recuperación de contraseña',
-      // Para fines de proyecto se devuelve el token para que el front lo use directamente
+      message: 'Se ha generado un enlace de recuperación de contraseña y se envió un correo con instrucciones',
+      // Para fines de proyecto se devuelve también el token para poder probar el endpoint /reset-password desde el front
       resetToken: token,
     });
   } catch (err) {

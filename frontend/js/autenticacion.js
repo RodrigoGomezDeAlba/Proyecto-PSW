@@ -99,9 +99,9 @@ async function enviarRecuperacion(event) {
     const data = await resp.json();
 
     if (!resp.ok) {
-        const msg = data.error || "Error";
+        const msg = data.error || data.message || "Error";
         if (window.Swal) {
-          Swal.fire("Error", msg, "error");
+          await Swal.fire("Error", msg, "error");
         } else {
           alert(msg);
         }
@@ -111,12 +111,68 @@ async function enviarRecuperacion(event) {
     if (window.Swal) {
       await Swal.fire(
         "Recuperación enviada",
-        "Se envió un correo con instrucciones para restablecer tu contraseña",
+        "Te enviamos un correo con el código de recuperación. Úsalo en la pantalla de 'Restablecer contraseña'.",
         "success"
       );
     } else {
       alert("Se envió un correo con instrucciones");
     }
+}
+
+async function restablecerPassword(event) {
+  event.preventDefault();
+
+  const token = document.getElementById("token").value.trim();
+  const pass1 = document.getElementById("newPassword1").value;
+  const pass2 = document.getElementById("newPassword2").value;
+
+  if (!token || !pass1 || !pass2) {
+    if (window.Swal) {
+      await Swal.fire("Campos incompletos", "Completa todos los campos.", "warning");
+    } else {
+      alert("Completa todos los campos");
+    }
+    return;
+  }
+
+  if (pass1 !== pass2) {
+    if (window.Swal) {
+      await Swal.fire("Error", "Las contraseñas no coinciden", "error");
+    } else {
+      alert("Las contraseñas no coinciden");
+    }
+    return;
+  }
+
+  const resp = await fetch(`${API_URL}/api/auth/reset-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token, newPassword: pass1 })
+  });
+
+  const data = await resp.json().catch(() => ({}));
+
+  if (!resp.ok) {
+    const msg = data.message || data.error || "No se pudo restablecer la contraseña";
+    if (window.Swal) {
+      await Swal.fire("Error", msg, "error");
+    } else {
+      alert(msg);
+    }
+    return;
+  }
+
+  if (window.Swal) {
+    await Swal.fire(
+      "Contraseña actualizada",
+      "Tu contraseña se actualizó correctamente. Ahora puedes iniciar sesión.",
+      "success"
+    );
+  } else {
+    alert("Contraseña actualizada correctamente");
+  }
+
+  window.location.href = "login.html";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -129,9 +185,15 @@ document.addEventListener("DOMContentLoaded", () => {
   if (formRecuperar) {
     formRecuperar.addEventListener("submit", enviarRecuperacion);
   }
+
+  const formRestablecer = document.getElementById("form-restablecer");
+  if (formRestablecer) {
+    formRestablecer.addEventListener("submit", restablecerPassword);
+  }
 });
 
 // Exponer funciones si se quieren usar desde otros scripts
 window.registrarUsuario = registrarUsuario;
 window.iniciarSesion = iniciarSesion;
 window.enviarRecuperacion = enviarRecuperacion;
+window.restablecerPassword = restablecerPassword;
