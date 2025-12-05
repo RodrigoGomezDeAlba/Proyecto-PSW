@@ -47,12 +47,14 @@ async function renderCarrito() {
   }
 
   cont.innerHTML = "";
+  const baseImg = window.API_URL || "";
+
   items.forEach(item => {
     const el = document.createElement("div");
     el.className = "card";
 
-    const imgSrc = item.imagen_url && item.imagen_url.trim() !== "" 
-      ? item.imagen_url 
+    const imgSrc = item.imagen_url
+      ? `${baseImg}/img/${item.imagen_url}`
       : "img/logo.png";
 
     el.innerHTML = `
