@@ -6,6 +6,53 @@ const { company } = require('../data/company');
 
 const assetsPath = path.join(__dirname, '..', 'assets');
 
+// Configuración para API HTTP de SendGrid
+const SG_API_KEY = process.env.SENDGRID_API_KEY;
+const SG_FROM = process.env.SENDGRID_FROM;
+const SG_FROM_NAME = process.env.SENDGRID_FROM_NAME || company.name;
+
+// Helper para mandar correo con la API HTTP de SendGrid
+async function enviarCorreoSendGrid({ to, subject, html }) {
+  if (!SG_API_KEY || !SG_FROM) {
+    console.warn('SENDGRID_API_KEY o SENDGRID_FROM no configurados; se omite envío real.');
+    return;
+  }
+
+  const body = {
+    personalizations: [
+      {
+        to: [{ email: to }],
+        subject,
+      },
+    ],
+    from: {
+      email: SG_FROM,
+      name: SG_FROM_NAME,
+    },
+    content: [
+      {
+        type: 'text/html',
+        value: html,
+      },
+    ],
+  };
+
+  const resp = await fetch('https://api.sendgrid.com/v3/mail/send', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${SG_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!resp.ok) {
+    const text = await resp.text().catch(() => '');
+    console.error('Error SendGrid:', resp.status, text);
+    throw new Error(`SendGrid HTTP ${resp.status}`);
+  }
+}
+
 // SUSCRIPCIÓN: guarda en BD + envía correo con CUPÓN
 async function suscribirse(req, res) {
   try {
@@ -22,35 +69,24 @@ async function suscribirse(req, res) {
 
     const nuevaSuscripcionId = await SuscripcionModel.crearSuscripcion(email);
 
-    // 📧 Correo de gracias por suscribirse + cupón (no debe romper la API si falla)
+    // 📧 Correo de gracias por suscribirse (vía SendGrid HTTP; si falla, no rompemos la API)
     try {
-      await sendMail({
+      const html = `
+        <div style="font-family: Arial, sans-serif;">
+          <h2>${company.name}</h2>
+          <p><em>"${company.slogan}"</em></p>
+          <p>Gracias por suscribirte. Aquí tienes tu cupón de compra (menciónalo en tu próxima compra):</p>
+          <p><strong>CUPÓN: BOTELLONES10</strong></p>
+        </div>
+      `;
+
+      await enviarCorreoSendGrid({
         to: email,
         subject: '¡Gracias por suscribirte!',
-        html: `
-          <div style="font-family: Arial, sans-serif;">
-            <img src="cid:logo_empresa" alt="Logo" style="height: 60px;"><br>
-            <h2>${company.name}</h2>
-            <p><em>"${company.slogan}"</em></p>
-            <p>Gracias por suscribirte. Aquí tienes tu cupón de compra:</p>
-            <img src="cid:cupon_img" alt="Cupón" style="max-width: 100%; height: auto;">
-          </div>
-        `,
-        attachments: [
-          {
-            filename: 'logo.png',
-            path: path.join(assetsPath, 'logo.png'),
-            cid: 'logo_empresa'
-          },
-          {
-            filename: 'cupon.png',
-            path: path.join(assetsPath, 'cupon.png'),
-            cid: 'cupon_img'
-          }
-        ]
+        html,
       });
     } catch (mailErr) {
-      console.error('⚠️ Error enviando correo de suscripción (se continúa sin fallar):', mailErr);
+      console.error('⚠️ Error enviando correo de suscripción (SendGrid):', mailErr);
     }
 
     return res
