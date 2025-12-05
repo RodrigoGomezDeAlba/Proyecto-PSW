@@ -152,17 +152,22 @@ function cargarDestacados() {
   const cont = document.getElementById("destacados");
   if (!cont) return;
 
+  const baseImg = window.API_URL || "";
+
   cont.innerHTML = "";
   productos.slice(0, 4).forEach(p => {
     const card = document.createElement("div");
     card.className = "card";
 
     const enWishlist = isInWishlist(p.id);
+    const imgSrc = p.imagen_url
+      ? `${baseImg}/img/${p.imagen_url}`
+      : "img/logo.png";
 
     card.innerHTML = `
-      <img class="product-img" src="${p.imagen_url || 'img/botella-placeholder.png'}" alt="${p.nombre}">
+      <img class="product-img" src="${imgSrc}" alt="${p.nombre}">
       <h4>${p.nombre} ${
-      p.stock === 0 ? '<span style="color:red">(Sin stock)</span>' : ""
+      p.stock === 0 ? '<span style=\"color:red\">(Sin stock)</span>' : ""
     }</h4>
       <p>${p.descripcion || ""}</p>
       <p><strong>$${p.precio.toFixed(2)}</strong></p>
@@ -255,25 +260,23 @@ function renderCatalogo() {
     return;
   }
 
-    filtrados.forEach(p => {
+  const baseImg = window.API_URL || "";
+
+  filtrados.forEach(p=>{
     const card = document.createElement("div");
     card.className = "card";
 
-    const imgSrc = p.imagen_url && p.imagen_url.trim() !== ""
-      ? p.imagen_url
+    const imgSrc = p.imagen_url
+      ? `${baseImg}/img/${p.imagen_url}`
       : "img/logo.png";
-
-    const precioNum = Number(p.precio);
-    const precioMostrar = isNaN(precioNum) ? 0 : precioNum;
 
     card.innerHTML = `
       <img src="${imgSrc}" alt="${p.nombre}" class="card-img" />
-      <h4>${p.nombre} ${p.stock === 0 ? '<span style="color:red">(Sin stock)</span>' : ''}</h4>
+      <h4>${p.nombre} ${p.stock===0?'<span style="color:red">(Sin stock)</span>':''}</h4>
       <p>${p.descripcion || ""}</p>
-      <p><strong>$${precioMostrar.toFixed(2)}</strong></p>
+      <p><strong>$${p.precio.toFixed(2)}</strong></p>
       <p>Stock: ${p.stock}</p>
-      <button class="btn agregar" data-id="${p.id}" ${p.stock === 0 ? "disabled" : ""}>Agregar</button>
-    `;
+      <button class="btn agregar" data-id="${p.id}" ${p.stock===0?"disabled":""}>Agregar</button>`;
     cont.appendChild(card);
   });
 
@@ -329,12 +332,12 @@ async function toggleWishlist(id) {
   if (!token) {
     if (window.Swal) {
       await Swal.fire(
-        "Inicia sesi�n",
-        "Debes iniciar sesi�n para usar la lista de deseos.",
+        "Inicia sesion",
+        "Debes iniciar sesion para usar la lista de deseos.",
         "info"
       );
     } else {
-      alert("Debes iniciar sesi�n para usar la lista de deseos.");
+      alert("Debes iniciar sesion para usar la lista de deseos.");
     }
     window.location.href = "login.html";
     return;
@@ -374,6 +377,8 @@ function renderWishlist(cont) {
     return;
   }
 
+  const baseImg = window.API_URL || "";
+
   deseados.forEach(p => {
     const card = document.createElement("div");
     card.className = "card";
@@ -381,8 +386,12 @@ function renderWishlist(cont) {
       ? '<span class="tag-oferta">En oferta</span>'
       : "";
 
+    const imgSrc = p.imagen_url
+      ? `${baseImg}/img/${p.imagen_url}`
+      : "img/logo.png";
+
     card.innerHTML = `
-      <img class="product-img" src="${p.imagen_url || 'img/botella-placeholder.png'}" alt="${p.nombre}">
+      <img class="product-img" src="${imgSrc}" alt="${p.nombre}">
       <h4>${p.nombre} ${
       p.stock === 0 ? '<span style="color:red">(Sin stock)</span>' : ""
     } ${etiquetaOferta}</h4>
