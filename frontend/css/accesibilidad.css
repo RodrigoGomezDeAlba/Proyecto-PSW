@@ -3,28 +3,39 @@
     right: 20px;
     bottom: 20px;
     background: #007bff;
-    color: white;
+    color: #fff;
     padding: 12px 16px;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 22px;
+    font-size: 20px;
     z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
 #panel-accesibilidad {
     position: fixed;
     right: 20px;
     bottom: 80px;
-    width: 220px;
-    background: white;
-    border: 2px solid #333;
-    padding: 15px;
-    border-radius: 10px;
+    width: 240px;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid rgba(0,0,0,0.12);
+    padding: 12px;
+    border-radius: 8px;
     z-index: 1500;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
 }
 
 #panel-accesibilidad.oculto {
     display: none;
+}
+
+#panel-accesibilidad h3 {
+    margin: 0 0 8px 0;
+    font-size: 1rem;
 }
 
 #panel-accesibilidad button {
@@ -32,12 +43,21 @@
     margin-top: 8px;
     padding: 8px;
     cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    background: var(--link);
+    color: white;
+    font-size: 0.95rem;
 }
 
-.texto-grande {
-    font-size: 1.25rem !important;
+#panel-accesibilidad .small-btn {
+    padding: 6px;
+    width: 48%;
+    display: inline-block;
+    box-sizing: border-box;
 }
 
-.texto-xgrande {
-    font-size: 1.4rem !important;
+#panel-accesibilidad .row {
+    display: flex;
+    gap: 8px;
 }

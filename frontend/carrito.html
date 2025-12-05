@@ -3,10 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>BotellonesMX - Inicio</title>
-
+  <title>BotellonesMX - Carrito</title>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
   <link rel="stylesheet" href="css/estilos.css">
   <link rel="stylesheet" href="css/accesibilidad.css">
 </head>
@@ -26,21 +24,23 @@
     </header>
 
   <main class="contenido">
-    <section class="hero">
-      <h1>Bienvenido a BotellonesMX</h1>
-      <p>Proyecto académico - Tienda en línea</p>
-      <a class="btn" href="productos.html">Ver productos</a>
-    </section>
+    <h1>Tu Carrito</h1>
 
-    <section>
-      <h2>Destacados</h2>
-      <div id="destacados" class="grilla"></div>
+    <div id="carrito-list"></div>
+
+    <section id="resumen-compra">
+      <h2>Resumen de compra</h2>
+      <p>Subtotal: $<span id="sub">0.00</span></p>
+      <p>Impuesto (16%): $<span id="tax">0.00</span></p>
+      <p>Envío: $<span id="ship">0.00</span></p>
+      <p><strong>Total: $<span id="total">0.00</span></strong></p>
+
+      <a href="checkout.html" class="btn">Finalizar compra</a>
     </section>
   </main>
 
   <footer class="footer">
     <p>© 2025 BotellonesMX - Proyecto académico</p>
-    <p>Redes: (iconos pendientes)</p>
   </footer>
 
   <div id="accesibilidad-btn">♿</div>
@@ -52,8 +52,8 @@
   </div>
 
   <script src="js/accesibilidad.js"></script>
-  <script src="js/tienda.js"></script>
-  <script src="js/main.js"></script>
+  <script src="js/tienda.js"></script>      <!-- NUEVO, muy importante -->
   <script src="js/carrito.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>

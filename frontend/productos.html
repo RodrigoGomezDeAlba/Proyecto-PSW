@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>BotellonesMX - Inicio</title>
-
+  <title>BotellonesMX - Productos</title>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <link rel="stylesheet" href="css/estilos.css">
   <link rel="stylesheet" href="css/accesibilidad.css">
+  <link rel="stylesheet" href="css/productos.css">
 </head>
 <body>
     <header class="header">
@@ -26,21 +26,37 @@
     </header>
 
   <main class="contenido">
-    <section class="hero">
-      <h1>Bienvenido a BotellonesMX</h1>
-      <p>Proyecto académico - Tienda en línea</p>
-      <a class="btn" href="productos.html">Ver productos</a>
-    </section>
+    <h1>Catálogo</h1>
 
-    <section>
-      <h2>Destacados</h2>
-      <div id="destacados" class="grilla"></div>
-    </section>
+    <aside class="filtros">
+      <h2>Filtros</h2>
+
+      <label>
+        Categoría
+        <select id="filtro-categoria">
+          <option value="todos">Todos</option>
+        </select>
+      </label>
+
+      <label>
+        Rango de precio
+        <input id="precio-min" type="number" placeholder="Mínimo" />
+        <input id="precio-max" type="number" placeholder="Máximo" />
+      </label>
+
+      <label class="check-inline">
+        <input id="solo-oferta" type="checkbox" />
+        Solo en oferta
+      </label>
+
+      <button id="aplicar-filtro" class="btn">Aplicar filtros</button>
+    </aside>
+
+    <section id="catalogo" class="grilla"></section>
   </main>
 
   <footer class="footer">
     <p>© 2025 BotellonesMX - Proyecto académico</p>
-    <p>Redes: (iconos pendientes)</p>
   </footer>
 
   <div id="accesibilidad-btn">♿</div>
@@ -53,7 +69,7 @@
 
   <script src="js/accesibilidad.js"></script>
   <script src="js/tienda.js"></script>
-  <script src="js/main.js"></script>
   <script src="js/carrito.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>

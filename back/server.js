@@ -3,37 +3,59 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
-const authRoutes = require('./routes/auth.routes');
-const productosRoutes = require('./routes/productos.routes');
+// ❌ YA NO NECESITAMOS ESTO
+// const mysql = require('mysql2'); 
+
+// ✅ Usa el pool de conexion.js
+const pool = require('./db/conexion');
+
+const authRoutes = require('./routes/auth.routes'); 
 const carritoRoutes = require('./routes/carrito.routes');
+const productosRoutes = require('./routes/productos.routes'); 
+const ordenesRoutes = require('./routes/ordenes.routes');
+const suscripcionRoutes = require('./routes/suscripcion.routes');
+const adminRoutes = require('./routes/admin.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middlewares globales
+// Middlewares
 app.use(cors());
 app.use(express.json());
+app.use('/api/auth', authRoutes);
+app.use('/api', carritoRoutes);
+app.use('/api', productosRoutes);
+app.use('/api', ordenesRoutes);
+app.use('/api', suscripcionRoutes); 
+app.use('/api', adminRoutes);
 
-//Aqui conectaremos la BD
-const db = mysql.createConnection(process.env.DATABASE_URL || '');
+// ❌ Elimina / comenta este bloque viejo:
+// const db = mysql.createConnection(process.env.DATABASE_URL || '');
+// db.connect(...)
 
-app.get('/api/test', (req, res) => {
+// ✅ Ruta de prueba usando el pool
+app.get('/api/test-db', async (req, res) => {
+  try {
+    const [rows] = await pool.query('SELECT 1 + 1 AS resultado');
     res.json({
-        mensaje: "Backend conectado exitosamente",
-        fecha: new Date().toISOString()
+      status: 'success',
+      mensaje: '¡Conexión DB Exitosa!',
+      calculo: rows[0].resultado,
     });
+  } catch (err) {
+    console.error('Error en /api/test-db:', err);
+    res.status(500).json({
+      status: 'error',
+      mensaje: 'Error en BD',
+      detalle: err.message,
+    });
+  }
 });
 
-// Rutas del backend
-app.use('/api/auth', authRoutes);
-app.use('/api', productosRoutes);
-app.use('/api', carritoRoutes);
-
-// Endpoint sencillo para comprobar que el back está vivo
 app.get('/', (req, res) => {
   res.json({ message: 'API ProyectoFinal funcionando' });
 });
 
 app.listen(PORT, () => {
-  console.log(`Servidor backend escuchando en http://localhost:${PORT}`);
+  console.log(`Servidor backend escuchando en puerto ${PORT}`);
 });
