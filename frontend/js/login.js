@@ -52,6 +52,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (data.usuario && data.usuario.nombre) {
         localStorage.setItem("usuario", data.usuario.nombre);
       }
+      if (data.usuario && data.usuario.email) {
+        localStorage.setItem("userEmail", data.usuario.email);
+      }
 
       Swal.fire("Bienvenido", data.usuario?.nombre || "", "success").then(() => {
         window.location.href = "index.html";
