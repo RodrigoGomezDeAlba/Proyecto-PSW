@@ -9,37 +9,50 @@
   <link rel="stylesheet" href="css/accesibilidad.css">
 </head>
 <body>
-    <header class="header">
+  <header class="header">
     <div class="logo"><a href="index.html">BotellonesMX</a></div>
     <nav class="menu">
-        <a href="index.html">Inicio</a>
-        <a href="productos.html">Productos</a>
-        <a href="nosotros.html">Nosotros</a>
-        <a href="faq.html">Preguntas</a>
-        <a href="contacto.html">Contacto</a>
-        <a href="wishlist.html">Wishlist</a>
-        <a href="carrito.html">Carrito <span id="badge-count">0</span></a>
-        <a href="login.html">Login</a>
+      <a href="index.html">Inicio</a>
+      <a href="productos.html">Productos</a>
+      <a href="nosotros.html">Nosotros</a>
+      <a href="faq.html">Preguntas</a>
+      <a href="contacto.html">Contacto</a>
+      <a href="wishlist.html">Wishlist</a>
+      <a href="carrito.html">Carrito <span id="badge-count">0</span></a>
+      <a href="login.html">Login</a>
     </nav>
-    </header>
+  </header>
 
   <main class="contenido">
     <h1>Finalizar compra</h1>
 
     <form id="form-checkout">
       <h3>Datos de envío</h3>
+
       <label>Nombre completo
         <input type="text" name="nombre" required>
       </label>
+
       <label>Dirección
         <input type="text" name="direccion" required>
       </label>
+
       <label>Ciudad
         <input type="text" name="ciudad" required>
       </label>
+
       <label>Código postal
         <input type="text" name="cp" required>
       </label>
+
+      <label>Teléfono
+        <input type="tel" name="telefono" required>
+      </label>
+
+      <label>Correo electrónico
+        <input type="email" name="email" required>
+      </label>
+
       <label>País
         <select id="pais" name="pais" required>
           <option value="MX">México</option>
@@ -52,13 +65,59 @@
       <label><input type="radio" name="pago" value="transferencia"> Transferencia</label>
       <label><input type="radio" name="pago" value="oxxo"> OXXO</label>
 
+      <!-- Detalles de pago: TARJETA -->
+      <div id="pago-tarjeta" class="pago-detalle">
+        <h4>Pago con tarjeta (simulado)</h4>
+        <label>Nombre en la tarjeta
+          <input type="text" name="tarjeta_nombre">
+        </label>
+        <label>Número de tarjeta
+          <input type="text" name="tarjeta_numero" maxlength="19" placeholder="#### #### #### ####">
+        </label>
+        <label>Fecha de vencimiento
+          <input type="month" name="tarjeta_vencimiento">
+        </label>
+        <label>CVV
+          <input type="password" name="tarjeta_cvv" maxlength="4">
+        </label>
+      </div>
+
+      <!-- Detalles de pago: TRANSFERENCIA -->
+      <div id="pago-transferencia" class="pago-detalle oculto">
+        <h4>Pago por transferencia (simulado)</h4>
+        <label>Banco
+          <input type="text" name="trans_banco">
+        </label>
+        <label>Cuenta / CLABE
+          <input type="text" name="trans_cuenta">
+        </label>
+        <label>Nombre del titular
+          <input type="text" name="trans_titular">
+        </label>
+        <label>Referencia
+          <input type="text" name="trans_referencia">
+        </label>
+      </div>
+
+      <!-- Detalles de pago: OXXO -->
+      <div id="pago-oxxo" class="pago-detalle oculto">
+        <h4>Pago en OXXO (simulado)</h4>
+        <p>Se generará una referencia simulada para pago en OXXO.</p>
+        <label>Nombre del pagador
+          <input type="text" name="oxxo_nombre">
+        </label>
+        <label>Correo para enviar comprobante
+          <input type="email" name="oxxo_email">
+        </label>
+      </div>
+
       <button type="submit" class="btn">Pagar (simulado)</button>
     </form>
 
     <section id="resumen-compra">
       <h2>Resumen de compra</h2>
       <p>Subtotal: $<span id="sub">0.00</span></p>
-      <p>Impuesto (16%): $<span id="tax">0.00</span></p>
+      <p>Impuesto: $<span id="tax">0.00</span></p>
       <p>Envío: $<span id="ship">0.00</span></p>
       <p><strong>Total: $<span id="total">0.00</span></strong></p>
     </section>
