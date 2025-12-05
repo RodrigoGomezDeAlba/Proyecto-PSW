@@ -7,17 +7,13 @@ async function crearOrden(req, res) {
   try {
     const usuarioId = req.user.id;
 
-    // 1) Crear orden a partir del carrito
+    // Crear orden a partir del carrito
     const resultado = await OrdenModel.crearOrdenDesdeCarrito(usuarioId);
-    // resultado debería traer al menos: { ordenId, total }
-
-    // 2) Obtener la orden con sus items para el PDF/correo
+    // Obtener la orden con sus items para el PDF del correo
     const ordenCompleta = await OrdenModel.obtenerOrdenConItems(
       resultado.ordenId,
       usuarioId
     );
-
-    // Por si acaso, evitamos rompernos si viene raro
     const items = ordenCompleta?.items || ordenCompleta?.detalles || [];
     const total =
       resultado.total ||
@@ -29,7 +25,7 @@ async function crearOrden(req, res) {
     const emailCliente =
       req.user.email || req.user.correo || null;
 
-    // 3) Enviar correo de compra (HTTP SendGrid) si tenemos correo del cliente
+    // Enviar correo de compra 
     if (emailCliente) {
       try {
         await enviarCorreoCompraHTTP({
@@ -39,8 +35,7 @@ async function crearOrden(req, res) {
           total,
         });
       } catch (errMail) {
-        console.error('⚠️ Error al enviar correo de compra (SendGrid):', errMail);
-        // No rompemos la creación de la orden, sólo lo registramos
+        console.error('Error al enviar correo de compra:', errMail);
       }
     } else {
       console.warn(
@@ -48,7 +43,7 @@ async function crearOrden(req, res) {
       );
     }
 
-    // 4) Respuesta al front
+    // Respuesta al front
     return res.status(201).json({
       message: 'Orden creada correctamente',
       ordenId: resultado.ordenId,

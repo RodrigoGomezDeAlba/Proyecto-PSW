@@ -49,11 +49,13 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         localStorage.setItem("token", data.token);
       }
-      if (data.usuario && data.usuario.nombre) {
-        localStorage.setItem("usuario", data.usuario.nombre);
-      }
-      if (data.usuario && data.usuario.email) {
-        localStorage.setItem("userEmail", data.usuario.email);
+
+      if (data.usuario) {
+        // Guardamos el usuario completo como JSON para usarlo en el header
+        localStorage.setItem("usuario", JSON.stringify(data.usuario));
+        if (data.usuario.email) {
+          localStorage.setItem("userEmail", data.usuario.email);
+        }
       }
 
       Swal.fire("Bienvenido", data.usuario?.nombre || "", "success").then(() => {

@@ -287,10 +287,11 @@ a {
   background: #fff;
   padding: 4px;
   box-sizing: border-box;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
 
-.card:hover .product-img {
+.card:hover .product-img,
+.card:hover .card-img {
   transform: scale(1.02);
   box-shadow: 0 6px 14px rgba(0,0,0,0.18);
 }
@@ -302,6 +303,10 @@ a {
   object-fit: contain;
   border-radius: 6px;
   margin-bottom: 8px;
+  background: #fff;
+  padding: 4px;
+  box-sizing: border-box;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
 
 body.tema-oscuro .card,
