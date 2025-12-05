@@ -7,9 +7,6 @@ const { company } = require('../data/company');
 // Ruta del logo 
 const logoPath = path.join(__dirname, '../assets/logo.png');
 
-// ------------------------------------------------------------
-// SMTP opcional (solo se usa si hay configuración MAIL_*)
-// ------------------------------------------------------------
 const hasSmtpConfig =
   process.env.MAIL_HOST && process.env.MAIL_USER && process.env.MAIL_PASS;
 
@@ -59,9 +56,6 @@ async function sendMail({ to, subject, html, attachments = [] }) {
     to,
     subject,
     html,
-    attachments,
-  });
-}
     attachments,
   });
 }
@@ -169,7 +163,6 @@ async function enviarCorreoCompra(datosCompra) {
   });
 }
 
-// ---- exportaciones ----
 sendMail.enviarCorreoContacto = enviarCorreoContacto;
 sendMail.enviarCorreoSuscripcion = enviarCorreoSuscripcion;
 sendMail.enviarCorreoCompra = enviarCorreoCompra;
