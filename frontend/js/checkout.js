@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     actualizarResumen();
   }
 
-  // Manejo de cambio de metodo de pago
+  // Manejo de cambio de método de pago
   const radiosPago = document.querySelectorAll("input[name='pago']");
   radiosPago.forEach(r =>
     r.addEventListener("change", actualizarVistaPago)
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const formData = new FormData(form);
     const envio = Object.fromEntries(formData.entries());
 
-    // Validaciones basicas de envio
+    // Validaciones básicas de envío
     if (!envio.nombre || !envio.direccion || !envio.ciudad || !envio.cp || !envio.telefono || !envio.email) {
       await Swal.fire("Datos incompletos", "Por favor llena todos los datos de envío (incluyendo teléfono y correo).", "warning");
       return;
@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // mapeo del carrito del backend
+
     const items = rawItems.map(it => ({
       id: it.producto_id,
       nombre: it.nombre,
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
       total
     };
 
-    // Nota de compra local se imprime en nueva ventana
+    // Nota de compra local 
     const notaHTML = generarNotaHTML(order);
     const w = window.open("", "_blank");
     w.document.write(notaHTML);
@@ -148,7 +148,7 @@ function validarDatosPago(envio) {
       Swal.fire("Datos de tarjeta incompletos", "Llena todos los campos de la tarjeta.", "warning");
       return false;
     }
-    // Validacion sencilla de longitud
+
     const digits = envio.tarjeta_numero.replace(/\D/g, "");
     if (digits.length < 13 || digits.length > 19) {
       Swal.fire("Número de tarjeta inválido", "Verifica el número de tu tarjeta (simulado).", "warning");
@@ -180,7 +180,6 @@ function validarDatosPago(envio) {
 function calcularTotales(items, pais = "MX") {
   const subtotal = items.reduce((s, i) => s + (i.subtotal || 0), 0);
 
-  // Impuestos y envio dependen del pais 
   let taxRate;
   let ship;
 
