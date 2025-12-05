@@ -28,13 +28,22 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   const selectPais = document.getElementById("pais");
-  if (selectPais) {
-    selectPais.addEventListener("change", () => {
-      if (Array.isArray(window.rawItems)) {
-        actualizarResumenCheckout(window.rawItems, selectPais.value);
+      if (selectPais) {
+        selectPais.addEventListener("change", () => {
+          if (Array.isArray(window.rawItems)) {
+            actualizarResumenCheckout(window.rawItems, selectPais.value);
+          }
+        });
       }
-    });
-  }
+
+      const inputCupon = document.getElementById("cupon");
+      if (inputCupon) {
+        inputCupon.addEventListener("input", () => {
+          if (Array.isArray(window.rawItems)) {
+            actualizarResumenCheckout(window.rawItems, document.getElementById("pais")?.value || "MX");
+          }
+        });
+      }
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -67,7 +76,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       subtotal: it.subtotal
     }));
 
-    const { subtotal, tax, ship, total } = calcularTotales(items, envio.pais);
+    const { subtotal, tax, ship, discount, total } = calcularTotales(items, envio.pais, envio.cupon);
 
     // Construir objeto de orden que se envia al backend
     const order = {
@@ -82,7 +91,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       subtotal,
       tax,
       ship,
-      total
+      discount,
+      total,
+      cupon: envio.cupon || null,
     };
 
     // Nota de compra local 
@@ -181,7 +192,7 @@ function validarDatosPago(envio) {
   return true;
 }
 
-function calcularTotales(items, pais = "MX") {
+function calcularTotales(items, pais = "MX", cupon = "") {
   const subtotal = items.reduce((s, i) => s + (i.subtotal || 0), 0);
 
   let taxRate;
@@ -196,24 +207,36 @@ function calcularTotales(items, pais = "MX") {
   }
 
   const tax = subtotal * taxRate;
-  const total = subtotal + tax + ship;
+
+  // Cupón simple: BOTELLON10 -> 10% de descuento sobre subtotal
+  const cuponNormalizado = (cupon || "").trim().toUpperCase();
+  let discount = 0;
+  if (cuponNormalizado === "BOTELLON10") {
+    discount = subtotal * 0.10;
+  }
+
+  const total = subtotal + tax + ship - discount;
 
   // Actualizar resumen en la vista
   const subEl = document.getElementById("sub");
   const taxEl = document.getElementById("tax");
   const shipEl = document.getElementById("ship");
+  const discountEl = document.getElementById("discount");
   const totalEl = document.getElementById("total");
 
   if (subEl) subEl.textContent = subtotal.toFixed(2);
   if (taxEl) taxEl.textContent = tax.toFixed(2);
   if (shipEl) shipEl.textContent = ship.toFixed(2);
+  if (discountEl) discountEl.textContent = discount.toFixed(2);
   if (totalEl) totalEl.textContent = total.toFixed(2);
 
-  return { subtotal, tax, ship, total };
+  return { subtotal, tax, ship, discount, total };
 }
 
 function actualizarResumenCheckout(items, pais) {
-  calcularTotales(items, pais);
+  const inputCupon = document.getElementById("cupon");
+  const cupon = inputCupon ? inputCupon.value : "";
+  calcularTotales(items, pais, cupon);
 }
 
 function generarNotaHTML(order) {

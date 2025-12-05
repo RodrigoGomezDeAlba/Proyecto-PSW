@@ -9,7 +9,11 @@ async function registrarUsuario(event) {
   const password2 = document.getElementById("password2").value;
 
   if (password1 !== password2) {
-    alert("Las contraseñas no coinciden");
+    if (window.Swal) {
+      Swal.fire("Error", "Las contraseñas no coinciden", "error");
+    } else {
+      alert("Las contraseñas no coinciden");
+    }
     return;
   }
 
@@ -28,11 +32,20 @@ async function registrarUsuario(event) {
   const data = await resp.json();
 
   if (!resp.ok) {
-    alert(data.message || data.error || "Error en el registro");
+    const msg = data.message || data.error || "Error en el registro";
+    if (window.Swal) {
+      Swal.fire("Error", msg, "error");
+    } else {
+      alert(msg);
+    }
     return;
   }
 
-  alert("Registro exitoso");
+  if (window.Swal) {
+    await Swal.fire("Registro exitoso", "Ahora puedes iniciar sesión", "success");
+  } else {
+    alert("Registro exitoso");
+  }
   window.location.href = "login.html";
 }
 
@@ -53,13 +66,22 @@ async function iniciarSesion(event) {
     const data = await resp.json();
 
     if (!resp.ok) {
-        alert(data.error || "Credenciales incorrectas");
+        const msg = data.error || "Credenciales incorrectas";
+        if (window.Swal) {
+          Swal.fire("Error", msg, "error");
+        } else {
+          alert(msg);
+        }
         return;
     }
 
     guardarToken(data.token);
 
-    alert("Bienvenido");
+    if (window.Swal) {
+      await Swal.fire("Bienvenido", "Has iniciado sesión correctamente", "success");
+    } else {
+      alert("Bienvenido");
+    }
     window.location.href = "index.html";
 }
 
@@ -77,11 +99,24 @@ async function enviarRecuperacion(event) {
     const data = await resp.json();
 
     if (!resp.ok) {
-        alert(data.error || "Error");
+        const msg = data.error || "Error";
+        if (window.Swal) {
+          Swal.fire("Error", msg, "error");
+        } else {
+          alert(msg);
+        }
         return;
     }
 
-    alert("Se envió un correo con instrucciones");
+    if (window.Swal) {
+      await Swal.fire(
+        "Recuperación enviada",
+        "Se envió un correo con instrucciones para restablecer tu contraseña",
+        "success"
+      );
+    } else {
+      alert("Se envió un correo con instrucciones");
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
