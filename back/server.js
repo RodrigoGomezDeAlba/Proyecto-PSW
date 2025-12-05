@@ -3,10 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
-// ❌ YA NO NECESITAMOS ESTO
-// const mysql = require('mysql2'); 
 
-// ✅ Usa el pool de conexion.js
 const pool = require('./db/conexion');
 
 const authRoutes = require('./routes/auth.routes'); 
@@ -19,6 +16,8 @@ const adminRoutes = require('./routes/admin.routes');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use('/img', express.static(path.join(__dirname, 'public/img')));
+
 // Middlewares
 app.use(cors());
 app.use(express.json());
@@ -29,11 +28,7 @@ app.use('/api', ordenesRoutes);
 app.use('/api', suscripcionRoutes); 
 app.use('/api', adminRoutes);
 
-// ❌ Elimina / comenta este bloque viejo:
-// const db = mysql.createConnection(process.env.DATABASE_URL || '');
-// db.connect(...)
 
-// ✅ Ruta de prueba usando el pool
 app.get('/api/test-db', async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT 1 + 1 AS resultado');

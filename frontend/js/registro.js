@@ -13,7 +13,7 @@ document.getElementById('form-registro').addEventListener('submit', async (e) =>
     }
 
     try {
-        const resp = await fetch(`${API_URL}/api/auth/registro`, {
+        const resp = await fetch(`${API_URL}/api/auth/register`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({ nombre, email, password: pass1 })

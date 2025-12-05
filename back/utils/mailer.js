@@ -1,10 +1,10 @@
-// back/utils/mailer.js
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 const path = require('path');
-const { buildPurchasePdf } = require('./pdf'); // <-- util para generar el PDF
+const { buildPurchasePdf } = require('./pdf'); 
+const { company } = require('../data/company');
 
-// 🔹 Ruta del logo (AJÚSTALA si tu logo está en otro lado)
+// Ruta del logo 
 const logoPath = path.join(__dirname, '../assets/logo.png');
 
 // Transporter general
@@ -27,10 +27,10 @@ transporter.verify(err => {
   }
 });
 
-// --------- función base (la que ya usabas) ----------
+//función base 
 async function sendMail({ to, subject, html, attachments = [] }) {
   return transporter.sendMail({
-    from: `"Mi Empresa" <${process.env.MAIL_USER}>`,
+    from: `"${company.name}" <${process.env.MAIL_USER}>`,
     to,
     subject,
     html,
@@ -38,16 +38,14 @@ async function sendMail({ to, subject, html, attachments = [] }) {
   });
 }
 
-// --------- funciones específicas ----------
-
-// 1) Correo para formulario de CONTACTO
+// Correo para formulario de CONTACTO
 async function enviarCorreoContacto({ nombre, email, mensaje }) {
   const html = `
     <div style="font-family: Arial, sans-serif;">
       <img src="cid:logoEmpresa" alt="Logo" 
            style="max-width: 150px; display:block; margin-bottom:10px;" />
-      <h2>Mi Empresa</h2>
-      <p><em>"Cada familia tiene una historia... aquí comienza la tuya"</em></p>
+      <h2>${company.name}</h2>
+      <p><em>"${company.slogan}"</em></p>
       <p>Hola <strong>${nombre}</strong>, hemos recibido tu mensaje:</p>
       <blockquote>${mensaje}</blockquote>
       <p>En breve te atenderemos.</p>
@@ -70,16 +68,16 @@ async function enviarCorreoContacto({ nombre, email, mensaje }) {
   });
 }
 
-// 2) Correo para SUSCRIPCIÓN (con cupón como imagen adjunta)
+// Correo para SUSCRIPCIÓN (con cupón como imagen adjunta)
 async function enviarCorreoSuscripcion({ email, cuponPath }) {
   const html = `
     <div style="font-family: Arial, sans-serif;">
       <img src="cid:logoEmpresa" alt="Logo" 
            style="max-width: 150px; display:block; margin-bottom:10px;" />
       <h2>¡Gracias por suscribirte!</h2>
-      <p>Te damos la bienvenida a <strong>Mi Empresa</strong>.</p>
+      <p>Te damos la bienvenida a <strong>${company.name}</strong>.</p>
       <p>Como agradecimiento, te enviamos tu cupón de compra en la imagen adjunta.</p>
-      <p><em>"Cada familia tiene una historia... aquí comienza la tuya"</em></p>
+      <p><em>"${company.slogan}"</em></p>
     </div>
   `;
 
@@ -119,7 +117,7 @@ async function enviarCorreoCompra(datosCompra) {
       <p>Adjuntamos tu nota de compra en formato PDF.</p>
       <p>Guárdala como comprobante.</p>
       <p>Total pagado: <strong>$${Number(datosCompra.total).toFixed(2)}</strong></p>
-      <p><em>"Cada familia tiene una historia... aquí comienza la tuya"</em></p>
+      <p><em>"${company.slogan}"</em></p>
     </div>
   `;
 

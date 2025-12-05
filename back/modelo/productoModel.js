@@ -13,8 +13,8 @@ async function obtenerProductos({ categoria, precioMin, precioMax }) {
   const condiciones = [];
   const params = [];
 
-  // Solo productos con inventario > 0 por defecto (disponibles)
-  condiciones.push('inventario > 0');
+  // Mostramos también productos sin inventario para indicar "No disponible"
+  // (el filtrado visual se hace en el frontend usando el campo inventario)
 
   if (categoria) {
     condiciones.push('categoria = ?');
@@ -34,7 +34,7 @@ async function obtenerProductos({ categoria, precioMin, precioMax }) {
   const where = condiciones.length ? `WHERE ${condiciones.join(' AND ')}` : '';
 
   const [rows] = await pool.query(
-    `SELECT id, nombre, descripcion, categoria, precio, inventario, imagen_url
+    `SELECT id, nombre, descripcion, categoria, precio, inventario, imagen_url, oferta
      FROM productos
      ${where}
      ORDER BY nombre`,
@@ -47,7 +47,7 @@ async function obtenerProductos({ categoria, precioMin, precioMax }) {
 // Obtener detalle de un producto por id
 async function obtenerProductoPorId(id) {
   const [rows] = await pool.query(
-    `SELECT id, nombre, descripcion, categoria, precio, inventario, imagen_url
+    `SELECT id, nombre, descripcion, categoria, precio, inventario, imagen_url, oferta
      FROM productos
      WHERE id = ?`,
     [id],
@@ -56,11 +56,19 @@ async function obtenerProductoPorId(id) {
 }
 
 // Crear nuevo producto (para admin)
-async function crearProducto({ nombre, descripcion, categoria, precio, inventario, imagen_url }) {
+async function crearProducto({ nombre, descripcion, categoria, precio, inventario, imagen_url, oferta }) {
   const [result] = await pool.query(
-    `INSERT INTO productos (nombre, descripcion, categoria, precio, inventario, imagen_url)
-     VALUES (?, ?, ?, ?, ?, ?)`,
-    [nombre, descripcion || null, categoria, precio, inventario, imagen_url || null],
+    `INSERT INTO productos (nombre, descripcion, categoria, precio, inventario, imagen_url, oferta)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [
+      nombre,
+      descripcion || null,
+      categoria,
+      precio,
+      inventario,
+      imagen_url || null,
+      oferta ? 1 : 0,
+    ],
   );
 
   return {
@@ -71,12 +79,13 @@ async function crearProducto({ nombre, descripcion, categoria, precio, inventari
     precio,
     inventario,
     imagen_url,
+    oferta: oferta ? 1 : 0,
   };
 }
 
 // Actualizar producto existente (para admin)
 async function actualizarProducto(id, campos) {
-  const permitidos = ['nombre', 'descripcion', 'categoria', 'precio', 'inventario', 'imagen_url'];
+  const permitidos = ['nombre', 'descripcion', 'categoria', 'precio', 'inventario', 'imagen_url', 'oferta'];
   const sets = [];
   const params = [];
 

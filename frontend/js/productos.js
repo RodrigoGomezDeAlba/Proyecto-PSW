@@ -38,5 +38,9 @@ function addToCart(prod){
   if (found) found.qty++;
   else cart.push({...prod, qty:1});
   saveCart(cart);
-  alert('Agregado al carrito');
+  if (window.Swal) {
+    Swal.fire("Carrito", "Agregado al carrito (modo demo local)", "success");
+  } else {
+    alert('Agregado al carrito');
+  }
 }

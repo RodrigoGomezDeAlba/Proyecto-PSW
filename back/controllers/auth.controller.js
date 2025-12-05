@@ -1,14 +1,20 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const UserModel = require('../modelo/userModel');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secreto-super-inseguro-cambia-esto';
 const SALT_ROUNDS = 10;
 
 // Control simple en memoria de intentos de login
-// Estructura: { [email]: { count: number, blocked: boolean } }
+// Estructura: { [email]: { count: number, blocked: boolean, blockedUntil?: number } }
 const loginAttempts = {};
 const MAX_LOGIN_ATTEMPTS = 3;
+const BLOCK_TIME_MS = 5 * 60 * 1000; // 5 minutos
+
+// Almacén simple en memoria para captchas por IP
+// Estructura: { [ip]: codigoEnMinusculas }
+const captchasPorIp = {};
 
 // Almacén simple en memoria para tokens de recuperación de contraseña
 // Estructura: { [token]: { userId: number, expiresAt: number } }
@@ -20,8 +26,22 @@ function registerFailedAttempt(email) {
   info.count += 1;
   if (info.count >= MAX_LOGIN_ATTEMPTS) {
     info.blocked = true;
+    info.blockedUntil = Date.now() + BLOCK_TIME_MS;
   }
   loginAttempts[email] = info;
+}
+
+function isBlocked(email) {
+  const info = loginAttempts[email];
+  if (!info || !info.blocked) return false;
+
+  if (info.blockedUntil && info.blockedUntil < Date.now()) {
+    // Desbloquear automáticamente después de 5 minutos
+    delete loginAttempts[email];
+    return false;
+  }
+
+  return true;
 }
 
 function resetLoginAttempts(email) {
@@ -58,15 +78,23 @@ async function register(req, res) {
 // POST /api/auth/login
 async function login(req, res) {
   try {
-    const { email, contrasena } = req.body;
+    const { email, contrasena, captcha } = req.body;
 
-    if (!email || !contrasena) {
-      return res.status(400).json({ message: 'Email y contraseña son obligatorios' });
+    if (!email || !contrasena || !captcha) {
+      return res.status(400).json({ message: 'Email, contraseña y captcha son obligatorios' });
     }
 
-    const attemptsInfo = loginAttempts[email];
-    if (attemptsInfo && attemptsInfo.blocked) {
-      return res.status(403).json({ message: 'Cuenta bloqueada' });
+    // Validar captcha por IP
+    const ip = req.ip || req.headers['x-forwarded-for'] || 'anon';
+    const esperado = captchasPorIp[ip];
+    if (!esperado || String(captcha).toLowerCase() !== esperado) {
+      return res.status(400).json({ message: 'Captcha incorrecto' });
+    }
+    // Consumir el captcha (debe usarse solo una vez)
+    delete captchasPorIp[ip];
+
+    if (isBlocked(email)) {
+      return res.status(403).json({ message: 'Cuenta bloqueada. Intenta de nuevo más tarde.' });
     }
 
     const user = await UserModel.findByEmail(email);
@@ -185,6 +213,24 @@ async function resetPassword(req, res) {
   }
 }
 
+// GET /api/auth/captcha
+function captcha(req, res) {
+  const ip = req.ip || req.headers['x-forwarded-for'] || 'anon';
+  const code = Math.random().toString(36).substring(2, 7).toUpperCase();
+
+  captchasPorIp[ip] = code.toLowerCase();
+
+  const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="140" height="40">
+  <rect width="100%" height="100%" fill="#f4f4f4" />
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+        font-family="monospace" font-size="22" fill="#333">${code}</text>
+</svg>`;
+
+  res.setHeader('Content-Type', 'image/svg+xml');
+  return res.send(svg);
+}
+
 // GET /api/auth/me
 function me(req, res) {
   // authMiddleware ya llenó req.user
@@ -201,4 +247,5 @@ module.exports = {
   me,
   forgotPassword,
   resetPassword,
+  captcha,
 };
