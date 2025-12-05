@@ -2,35 +2,39 @@ import { API_URL, guardarToken } from './api.js';
 import { cargarCaptcha } from './captcha.js';
 
 export async function registrarUsuario(event) {
-    event.preventDefault();
+  event.preventDefault();
 
-    const datos = {
-        nombre: document.getElementById("nombre").value,
-        email: document.getElementById("correo").value,
-        password: document.getElementById("password1").value,
-        password2: document.getElementById("password2").value
-    };
+  const nombre = document.getElementById("nombre").value;
+  const email = document.getElementById("correo").value;
+  const password1 = document.getElementById("password1").value;
+  const password2 = document.getElementById("password2").value;
 
-    if (datos.password !== datos.password2) {
-        alert("Las contraseñas no coinciden");
-        return;
-    }
+  if (password1 !== password2) {
+    alert("Las contraseñas no coinciden");
+    return;
+  }
 
-    const resp = await fetch(`${API_URL}/api/auth/register`, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(datos)
-    });
+  const datos = {
+    nombre,
+    email,
+    contrasena: password1      
+  };
 
-    const data = await resp.json();
+  const resp = await fetch(`${API_URL}/api/auth/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(datos)
+  });
 
-    if (!resp.ok) {
-        alert(data.error || "Error en el registro");
-        return;
-    }
+  const data = await resp.json();
 
-    alert("Registro exitoso");
-    window.location.href = "login.html";
+  if (!resp.ok) {
+    alert(data.message || data.error || "Error en el registro");
+    return;
+  }
+
+  alert("Registro exitoso");
+  window.location.href = "login.html";
 }
 
 export async function iniciarSesion(event) {
