@@ -6,8 +6,8 @@ export async function registrarUsuario(event) {
 
     const datos = {
         nombre: document.getElementById("nombre").value,
-        email: document.getElementById("email").value,
-        password: document.getElementById("password").value,
+        email: document.getElementById("correo").value,
+        password: document.getElementById("password1").value,
         password2: document.getElementById("password2").value
     };
 
@@ -82,3 +82,15 @@ export async function enviarRecuperacion(event) {
 
     alert("Se envió un correo con instrucciones");
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  const formRegistro = document.getElementById("formRegistro");
+  if (formRegistro) {
+    formRegistro.addEventListener("submit", registrarUsuario);
+  }
+
+  const formLogin = document.getElementById("form-login");
+  if (formLogin) {
+    formLogin.addEventListener("submit", iniciarSesion);
+  }
+});
