@@ -23,21 +23,23 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       const data = await resp.json().catch(() => ({}));
+      console.log("Respuesta suscripción:", resp.status, data);
 
       if (!resp.ok) {
         const msg = data.message || data.error || "No se pudo completar la suscripción";
         if (window.Swal) {
           await Swal.fire("Error", msg, "error");
+        } else {
+          alert(`Error al suscribirte: ${msg}`);
         }
         return;
       }
 
+      const okMsg = "Te hemos suscrito y (si el correo está configurado) se envió tu cupón a tu email.";
       if (window.Swal) {
-        await Swal.fire(
-          "¡Listo!",
-          "Te hemos suscrito y enviamos tu cupón a tu correo electrónico.",
-          "success"
-        );
+        await Swal.fire("¡Listo!", okMsg, "success");
+      } else {
+        alert(okMsg);
       }
       form.reset();
     } catch (err) {
@@ -48,6 +50,8 @@ document.addEventListener("DOMContentLoaded", () => {
           "No se pudo conectar con el servidor para suscribirte.",
           "error"
         );
+      } else {
+        alert("No se pudo conectar con el servidor para suscribirte.");
       }
     }
   });

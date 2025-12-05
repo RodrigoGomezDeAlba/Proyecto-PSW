@@ -280,30 +280,28 @@ a {
 
 .product-img {
   width: 100%;
-  height: 160px;
-  object-fit: cover;
+  max-height: 180px;
+  object-fit: contain; /* mantiene proporciones sin recortar */
   border-radius: 6px;
   margin-bottom: 8px;
+  background: #fff;
+  padding: 4px;
+  box-sizing: border-box;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card:hover .product-img {
-  transform: scale(1.03);
+  transform: scale(1.02);
   box-shadow: 0 6px 14px rgba(0,0,0,0.18);
 }
 
-.product-img {
+/* Imágenes genéricas en tarjetas (carrito, etc.) */
+.card-img {
   width: 100%;
-  height: 160px;
-  object-fit: cover;
+  max-height: 140px;
+  object-fit: contain;
   border-radius: 6px;
   margin-bottom: 8px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.card:hover .product-img {
-  transform: scale(1.03);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.18);
 }
 
 body.tema-oscuro .card,
