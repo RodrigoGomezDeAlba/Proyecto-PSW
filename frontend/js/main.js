@@ -10,34 +10,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   initWishlistPage();
 });
 
-function cargarDestacados(){
-  const productos = obtenerProductosLS();
-  const cont = document.getElementById("destacados");
-  if (!cont) return;
-  cont.innerHTML = "";
-
-  productos.slice(0,4).forEach(p=>{
-    const card = document.createElement("div");
-    card.className = "card";
-
-    const imgSrc = p.imagen_url && p.imagen_url.trim() !== "" 
-      ? p.imagen_url 
-      : "img/logo.png";
-
-    card.innerHTML = `
-      <img src="${imgSrc}" alt="${p.nombre}" class="card-img" />
-      <h4>${p.nombre} ${p.stock===0?'<span style="color:red">(Sin stock)</span>':''}</h4>
-      <p>${p.descripcion || ""}</p>
-      <p><strong>$${p.precio.toFixed(2)}</strong></p>
-      <button class="btn agregar" data-id="${p.id}" ${p.stock===0?"disabled":""}>Agregar</button>
-    `;
-    cont.appendChild(card);
-  });
-
-  cont.querySelectorAll(".agregar").forEach(b=> b.addEventListener("click", e=>{
-    const id = parseInt(e.target.dataset.id);
-    agregarAlCarrito(id,1);
-  }));
+// Carga todos los productos desde el backend y los guarda en window.PRODUCTOS
+async function cargarProductosDesdeBackend() {
+  try {
+    const productos = await apiFetch("/api/products");
+    // Adaptar al formato que usa el frontend
+    window.PRODUCTOS = productos.map(p => ({
+      ...p,
+      stock: p.inventario,
+      oferta: !!p.oferta,
+    }));
+    console.log("Productos cargados desde backend:", window.PRODUCTOS);
+  } catch (err) {
+    console.error("Error cargando productos desde el backend", err);
+    window.PRODUCTOS = [];
+  }
 }
 
 function obtenerProductos() {
