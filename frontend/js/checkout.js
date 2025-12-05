@@ -1,3 +1,7 @@
+import { API_URL, obtenerToken, apiGetCart } from "./api.js";
+
+
+
 document.addEventListener("DOMContentLoaded", ()=>{
   const form = document.getElementById("form-checkout");
   if(!form) return;
@@ -10,17 +14,17 @@ document.addEventListener("DOMContentLoaded", ()=>{
     e.preventDefault();
     const formData = new FormData(form);
     const envio = Object.fromEntries(formData.entries());
-    const carrito = JSON.parse(localStorage.getItem("carrito") || "[]");
-    const productos = JSON.parse(localStorage.getItem("productos") || "[]");
-    if(carrito.length===0){
-      Swal.fire('Carrito vacío','Agrega productos antes de comprar','info');
-      return;
-    }
-
-    const items = carrito.map(it=>{
-      const p = productos.find(x=> x.id===it.id);
-      return {id:p.id,nombre:p.nombre,precio:p.precio,cantidad:it.qty,subtotal: p.precio*it.qty};
-    });
+    if (rawItems.length === 0) {
+     Swal.fire('Carrito vacío','Agrega productos antes de comprar','info');
+     return;
+   }
+   const items = rawItems.map(it => ({
+     id: it.producto_id,
+     nombre: it.nombre,
+     precio: it.precio_unitario,
+     cantidad: it.cantidad,
+     subtotal: it.subtotal
+   }));
     const subtotal = items.reduce((s,i)=> s + i.subtotal,0);
     const tax = subtotal * 0.16;
     const ship = subtotal > 1000 ? 0 : 50;
@@ -43,11 +47,22 @@ document.addEventListener("DOMContentLoaded", ()=>{
     setTimeout(()=> w.print(), 700);
 
     try {
-      await fetch("/api/orders", {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify(order)
+      const token = obtenerToken();
+      if (!token) {
+        await Swal.fire('Inicia sesión', 'Debes iniciar sesión para completar la compra', 'info');
+        window.location.href = "login.html";
+        return;
+      }
+
+      await fetch(`${API_URL}/api/orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(order)
       });
+
       Swal.fire('Compra simulada','Nota generada y enviada al servidor (simulado)','success');
       disminuirInventario(items);
       localStorage.removeItem("carrito");
