@@ -188,6 +188,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const formRestablecer = document.getElementById("form-restablecer");
   if (formRestablecer) {
+    // Si el enlace viene con ?token=... desde el correo, rellenamos automáticamente el campo
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const tokenFromUrl = params.get("token");
+      if (tokenFromUrl) {
+        const tokenInput = document.getElementById("token");
+        if (tokenInput) tokenInput.value = tokenFromUrl;
+      }
+    } catch {}
+
     formRestablecer.addEventListener("submit", restablecerPassword);
   }
 });

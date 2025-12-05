@@ -34,7 +34,12 @@ async function renderCarrito() {
     items = await obtenerCarrito();
   } catch (err) {
     console.error("Error obteniendo carrito:", err);
-    cont.innerHTML = "<p>Error al cargar el carrito</p>";
+    const msg = err && err.message ? String(err.message) : "";
+    if (msg.includes("Token") || msg.includes("expirado")) {
+      cont.innerHTML = "<p>Debes iniciar sesión para ver tu carrito.</p>";
+    } else {
+      cont.innerHTML = "<p>Error al cargar el carrito</p>";
+    }
     return;
   }
 
