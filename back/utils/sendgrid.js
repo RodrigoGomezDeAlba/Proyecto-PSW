@@ -6,7 +6,7 @@ const SG_FROM_NAME = process.env.SENDGRID_FROM_NAME || company.name;
 
 async function sendWithSendGrid({ to, subject, html, attachments = [] }) {
   if (!SG_API_KEY || !SG_FROM) {
-    console.warn('SendGrid no configurado (SENDGRID_API_KEY / SENDGRID_FROM); se omite envío real.');
+    console.warn('SendGrid no configurado (SENDGRID_API_KEY / SENDGRID_FROM); cuidado.');
     return;
   }
 
@@ -31,7 +31,7 @@ async function sendWithSendGrid({ to, subject, html, attachments = [] }) {
 
   if (attachments.length) {
     body.attachments = attachments.map(a => ({
-      content: a.content, // base64 string
+      content: a.content, 
       filename: a.filename,
       type: a.type || 'application/octet-stream',
       disposition: 'attachment',
@@ -59,7 +59,7 @@ async function enviarCorreoSuscripcionHTTP(email) {
     <div style="font-family: Arial, sans-serif;">
       <h2>${company.name}</h2>
       <p><em>"${company.slogan}"</em></p>
-      <p>Gracias por suscribirte. Aquí tienes tu cupón de compra (menciónalo en tu próxima compra):</p>
+      <p>Gracias por suscribirte. Aquí tienes tu cupón de compra (usalo en tu proxima compra):</p>
       <p><strong>CUPÓN: BOTELLONES10</strong></p>
     </div>
   `;
