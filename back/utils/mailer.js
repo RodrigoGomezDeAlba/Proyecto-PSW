@@ -18,12 +18,15 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Verificación opcional
+// Verificación
 transporter.verify(err => {
+  const host = process.env.MAIL_HOST || 'smtp.gmail.com';
+  const port = process.env.MAIL_PORT || 587;
+
   if (err) {
-    console.error('Error con el mailer:', err);
+    console.error('Error con el mailer:', err, '\nHost:', host, 'Port:', port);
   } else {
-    console.log('Mailer listo para enviar correos');
+    console.log('Mailer listo para enviar correos en', host + ':' + port);
   }
 });
 
