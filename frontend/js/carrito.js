@@ -50,7 +50,13 @@ async function renderCarrito() {
   items.forEach(item => {
     const el = document.createElement("div");
     el.className = "card";
+
+    const imgSrc = item.imagen_url && item.imagen_url.trim() !== "" 
+      ? item.imagen_url 
+      : "img/logo.png";
+
     el.innerHTML = `
+      <img src="${imgSrc}" alt="${item.nombre}" class="card-img" />
       <h4>${item.nombre}</h4>
       <p>Precio: $${item.precio_unitario.toFixed(2)}</p>
       <p>Cantidad: <input type="number" value="${item.cantidad}" min="1"

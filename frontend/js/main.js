@@ -10,23 +10,34 @@ document.addEventListener("DOMContentLoaded", async () => {
   initWishlistPage();
 });
 
-async function cargarProductosDesdeBackend() {
-  try {
-    const productos = await apiFetch("/api/products");
-    window.PRODUCTOS = productos.map(p => ({
-      id: p.id,
-      nombre: p.nombre,
-      descripcion: p.descripcion,
-      categoria: p.categoria,
-      precio: Number(p.precio),
-      stock: p.inventario,
-      imagen_url: p.imagen_url,
-      oferta: !!p.oferta,
-    }));
-  } catch (err) {
-    console.error("Error cargando productos desde el backend:", err);
-    window.PRODUCTOS = window.PRODUCTOS || [];
-  }
+function cargarDestacados(){
+  const productos = obtenerProductosLS();
+  const cont = document.getElementById("destacados");
+  if (!cont) return;
+  cont.innerHTML = "";
+
+  productos.slice(0,4).forEach(p=>{
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const imgSrc = p.imagen_url && p.imagen_url.trim() !== "" 
+      ? p.imagen_url 
+      : "img/logo.png";
+
+    card.innerHTML = `
+      <img src="${imgSrc}" alt="${p.nombre}" class="card-img" />
+      <h4>${p.nombre} ${p.stock===0?'<span style="color:red">(Sin stock)</span>':''}</h4>
+      <p>${p.descripcion || ""}</p>
+      <p><strong>$${p.precio.toFixed(2)}</strong></p>
+      <button class="btn agregar" data-id="${p.id}" ${p.stock===0?"disabled":""}>Agregar</button>
+    `;
+    cont.appendChild(card);
+  });
+
+  cont.querySelectorAll(".agregar").forEach(b=> b.addEventListener("click", e=>{
+    const id = parseInt(e.target.dataset.id);
+    agregarAlCarrito(id,1);
+  }));
 }
 
 function obtenerProductos() {
@@ -239,33 +250,21 @@ function renderCatalogo() {
     return;
   }
 
-  filtrados.forEach(p => {
+  filtrados.forEach(p=>{
     const card = document.createElement("div");
     card.className = "card";
 
-    const enWishlist = isInWishlist(p.id);
-    const etiquetaOferta = p.oferta
-      ? '<span class="tag-oferta">En oferta</span>'
-      : "";
+    const imgSrc = p.imagen_url && p.imagen_url.trim() !== "" 
+      ? p.imagen_url 
+      : "img/logo.png";
 
     card.innerHTML = `
-      <img class="product-img" src="${p.imagen_url || 'img/botella-placeholder.png'}" alt="${p.nombre}">
-      <h4>${p.nombre} ${
-      p.stock === 0 ? '<span style="color:red">(Sin stock)</span>' : ""
-    } ${etiquetaOferta}</h4>
+      <img src="${imgSrc}" alt="${p.nombre}" class="card-img" />
+      <h4>${p.nombre} ${p.stock===0?'<span style="color:red">(Sin stock)</span>':''}</h4>
       <p>${p.descripcion || ""}</p>
       <p><strong>$${p.precio.toFixed(2)}</strong></p>
       <p>Stock: ${p.stock}</p>
-      <div class="card-actions">
-        <button class="btn agregar" data-id="${p.id}" ${
-      p.stock === 0 ? "disabled" : ""
-    }>Agregar</button>
-        <button class="btn-wish ${
-          enWishlist ? "active" : ""
-        }" data-id="${p.id}" aria-label="Lista de deseos">
-          ${enWishlist ? "â™¥" : "â™¡"}
-        </button>
-      </div>
+      <button class="btn agregar" data-id="${p.id}" ${p.stock===0?"disabled":""}>Agregar</button>
     `;
     cont.appendChild(card);
   });
@@ -322,12 +321,12 @@ async function toggleWishlist(id) {
   if (!token) {
     if (window.Swal) {
       await Swal.fire(
-        "Inicia sesión",
-        "Debes iniciar sesión para usar la lista de deseos.",
+        "Inicia sesiï¿½n",
+        "Debes iniciar sesiï¿½n para usar la lista de deseos.",
         "info"
       );
     } else {
-      alert("Debes iniciar sesión para usar la lista de deseos.");
+      alert("Debes iniciar sesiï¿½n para usar la lista de deseos.");
     }
     window.location.href = "login.html";
     return;
@@ -363,7 +362,7 @@ function renderWishlist(cont) {
   const deseados = productos.filter(p => ids.includes(p.id));
   if (!deseados.length) {
     cont.innerHTML =
-      "<p>Los productos de tu lista ya no están disponibles.</p>";
+      "<p>Los productos de tu lista ya no estï¿½n disponibles.</p>";
     return;
   }
 
