@@ -1,7 +1,6 @@
-import { API_URL, obtenerToken } from "./api.js";
+// Usa helpers globales de api.js (API_URL, obtenerToken, apiGetCart)
 
-
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const form = document.getElementById("form-checkout");
   if (!form) return;
 
@@ -16,15 +15,23 @@ document.addEventListener("DOMContentLoaded", () => {
   );
   actualizarVistaPago();
 
-  if (typeof rawItems !== "undefined" && Array.isArray(rawItems)) {
-    actualizarResumenCheckout(rawItems, document.getElementById("pais")?.value || "MX");
+  // Cargar items reales del carrito desde el backend
+  try {
+    window.rawItems = await apiGetCart();
+  } catch (err) {
+    console.error("Error obteniendo carrito en checkout:", err);
+    window.rawItems = [];
+  }
+
+  if (Array.isArray(window.rawItems)) {
+    actualizarResumenCheckout(window.rawItems, document.getElementById("pais")?.value || "MX");
   }
 
   const selectPais = document.getElementById("pais");
   if (selectPais) {
     selectPais.addEventListener("change", () => {
-      if (typeof rawItems !== "undefined" && Array.isArray(rawItems)) {
-        actualizarResumenCheckout(rawItems, selectPais.value);
+      if (Array.isArray(window.rawItems)) {
+        actualizarResumenCheckout(window.rawItems, selectPais.value);
       }
     });
   }
@@ -94,30 +101,27 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
+      // El backend crea la orden a partir del carrito del usuario
       await fetch(`${API_URL}/api/orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify(order)
+        body: JSON.stringify(order) // el back puede ignorar campos extra sin problema
       });
 
       await Swal.fire(
         "Compra finalizada",
-        "Nota generada y enviada al servidor (simulado). Revisa tu correo cuando el backend esté configurado.",
+        "Tu pedido se ha registrado correctamente.",
         "success"
       );
 
-      disminuirInventario(items);
-      localStorage.removeItem("carrito");
+      // El backend ya descuenta inventario y vacía el carrito; solo redirigimos
       setTimeout(() => window.location.href = "index.html", 1200);
     } catch (err) {
       console.error("Error al enviar la orden:", err);
-      await Swal.fire("Sin backend", "Pedido creado localmente (demo).", "info");
-      disminuirInventario(items);
-      localStorage.removeItem("carrito");
-      setTimeout(() => window.location.href = "index.html", 1200);
+      await Swal.fire("Error", "No se pudo registrar la orden. Inténtalo de nuevo.", "error");
     }
   });
 });
@@ -257,13 +261,3 @@ function generarNotaHTML(order) {
   `;
 }
 
-function disminuirInventario(items) {
-  const productos = JSON.parse(localStorage.getItem("productos") || "[]");
-  items.forEach(it => {
-    const idx = productos.findIndex(p => p.id === it.id);
-    if (idx >= 0) {
-      productos[idx].stock = Math.max(0, (productos[idx].stock || 0) - it.cantidad);
-    }
-  });
-  localStorage.setItem("productos", JSON.stringify(productos));
-}

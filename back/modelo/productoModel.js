@@ -13,8 +13,8 @@ async function obtenerProductos({ categoria, precioMin, precioMax }) {
   const condiciones = [];
   const params = [];
 
-  // Solo productos con inventario > 0 por defecto (disponibles)
-  condiciones.push('inventario > 0');
+  // Mostramos también productos sin inventario para indicar "No disponible"
+  // (el filtrado visual se hace en el frontend usando el campo inventario)
 
   if (categoria) {
     condiciones.push('categoria = ?');

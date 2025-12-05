@@ -1,10 +1,10 @@
-import { API_URL, obtenerToken } from './api.js';
+// Usa API_URL y obtenerToken globales de api.js
 
 console.log('admin-grafica.js cargado');
 
 async function cargarInventario() {
   try {
-    const token = obtenerToken();
+    const token = obtenerToken && obtenerToken();
     console.log('Llamando a:', `${API_URL}/api/admin/inventario-por-categoria`);
 
     const resp = await fetch(`${API_URL}/api/admin/inventario-por-categoria`, {
