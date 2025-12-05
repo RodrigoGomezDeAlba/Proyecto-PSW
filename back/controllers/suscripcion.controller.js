@@ -22,36 +22,40 @@ async function suscribirse(req, res) {
 
     const nuevaSuscripcionId = await SuscripcionModel.crearSuscripcion(email);
 
-    // 📧 Correo de gracias por suscribirse + cupón
-    await sendMail({
-      to: email,
-      subject: '¡Gracias por suscribirte!',
-      html: `
-        <div style="font-family: Arial, sans-serif;">
-          <img src="cid:logo_empresa" alt="Logo" style="height: 60px;"><br>
-          <h2>${company.name}</h2>
-          <p><em>"${company.slogan}"</em></p>
-          <p>Gracias por suscribirte. Aquí tienes tu cupón de compra:</p>
-          <img src="cid:cupon_img" alt="Cupón" style="max-width: 100%; height: auto;">
-        </div>
-      `,
-      attachments: [
-        {
-          filename: 'logo.png',
-          path: path.join(assetsPath, 'logo.png'),
-          cid: 'logo_empresa'
-        },
-        {
-          filename: 'cupon.png',
-          path: path.join(assetsPath, 'cupon.png'),
-          cid: 'cupon_img'
-        }
-      ]
-    });
+    // 📧 Correo de gracias por suscribirse + cupón (no debe romper la API si falla)
+    try {
+      await sendMail({
+        to: email,
+        subject: '¡Gracias por suscribirte!',
+        html: `
+          <div style="font-family: Arial, sans-serif;">
+            <img src="cid:logo_empresa" alt="Logo" style="height: 60px;"><br>
+            <h2>${company.name}</h2>
+            <p><em>"${company.slogan}"</em></p>
+            <p>Gracias por suscribirte. Aquí tienes tu cupón de compra:</p>
+            <img src="cid:cupon_img" alt="Cupón" style="max-width: 100%; height: auto;">
+          </div>
+        `,
+        attachments: [
+          {
+            filename: 'logo.png',
+            path: path.join(assetsPath, 'logo.png'),
+            cid: 'logo_empresa'
+          },
+          {
+            filename: 'cupon.png',
+            path: path.join(assetsPath, 'cupon.png'),
+            cid: 'cupon_img'
+          }
+        ]
+      });
+    } catch (mailErr) {
+      console.error('⚠️ Error enviando correo de suscripción (se continúa sin fallar):', mailErr);
+    }
 
     return res
       .status(201)
-      .json({ message: 'Suscripción registrada y correo enviado', id: nuevaSuscripcionId });
+      .json({ message: 'Suscripción registrada (correo enviado si fue posible)', id: nuevaSuscripcionId });
   } catch (err) {
     console.error('Error en suscribirse:', err);
     return res.status(500).json({ message: 'Error al crear suscripción' });
@@ -75,34 +79,38 @@ async function contacto(req, res) {
       mensaje
     );
 
-    // 📧 Correo de respuesta automática
-    await sendMail({
-      to: email,
-      subject: 'En breve te atenderemos',
-      html: `
-        <div style="font-family: Arial, sans-serif;">
-          <img src="cid:logo_empresa" alt="Logo" style="height: 80px;"><br>
-          <h2>${company.name}</h2>
-          <p><em>"${company.slogan}"</em></p>
-          <p>Hola ${nombre},</p>
-          <p>Hemos recibido tu mensaje:</p>
-          <blockquote>${mensaje}</blockquote>
-          <p>En breve te atenderemos.</p>
-          <p>Saludos,<br>Equipo de ${company.name}</p>
-        </div>
-      `,
-      attachments: [
-        {
-          filename: 'logo.png',
-          path: path.join(assetsPath, 'logo.png'),
-          cid: 'logo_empresa'
-        }
-      ]
-    });
+    // 📧 Correo de respuesta automática (no debe romper la API si falla)
+    try {
+      await sendMail({
+        to: email,
+        subject: 'En breve te atenderemos',
+        html: `
+          <div style="font-family: Arial, sans-serif;">
+            <img src="cid:logo_empresa" alt="Logo" style="height: 80px;"><br>
+            <h2>${company.name}</h2>
+            <p><em>"${company.slogan}"</em></p>
+            <p>Hola ${nombre},</p>
+            <p>Hemos recibido tu mensaje:</p>
+            <blockquote>${mensaje}</blockquote>
+            <p>En breve te atenderemos.</p>
+            <p>Saludos,<br>Equipo de ${company.name}</p>
+          </div>
+        `,
+        attachments: [
+          {
+            filename: 'logo.png',
+            path: path.join(assetsPath, 'logo.png'),
+            cid: 'logo_empresa'
+          }
+        ]
+      });
+    } catch (mailErr) {
+      console.error('⚠️ Error enviando correo de contacto (se continúa sin fallar):', mailErr);
+    }
 
     return res
       .status(201)
-      .json({ message: 'Mensaje enviado y correo de confirmación enviado', id: nuevoContactoId });
+      .json({ message: 'Mensaje recibido (correo enviado si fue posible)', id: nuevoContactoId });
   } catch (err) {
     console.error('Error en contacto:', err);
     return res.status(500).json({ message: 'Error al crear contacto' });
