@@ -1,5 +1,3 @@
-// Funciones de carrito que consumen el backend usando los helpers globales de api.js
-
 async function obtenerCarrito() {
   return apiGetCart();
 }
@@ -53,9 +51,14 @@ async function renderCarrito() {
     const el = document.createElement("div");
     el.className = "card";
 
-    const imgSrc = item.imagen_url
-      ? `${baseImg}/img/${item.imagen_url}`
-      : "img/logo.png";
+    let imgSrc = "img/logo.png";
+    if (item.imagen_url) {
+      if (item.imagen_url.startsWith("/")) {
+        imgSrc = `${baseImg}${item.imagen_url}`;
+      } else {
+        imgSrc = `${baseImg}/img/productos/${item.imagen_url}`;
+      }
+    }
 
     el.innerHTML = `
       <img src="${imgSrc}" alt="${item.nombre}" class="card-img" />
