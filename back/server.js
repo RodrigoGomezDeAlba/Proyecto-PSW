@@ -16,6 +16,8 @@ const adminRoutes = require('./routes/admin.routes');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use('/img', express.static(path.join(__dirname, 'public/img')));
+
 // Middlewares
 app.use(cors());
 app.use(express.json());

@@ -41,6 +41,9 @@ html, body {
 .logo {
   font-size: 1.5rem;
   font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .logo a {
@@ -48,11 +51,27 @@ html, body {
   text-decoration: none;
 }
 
+.logo-img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.lema-sitio {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
 .menu a {
   color: var(--header-text);
   margin-left: 15px;
   text-decoration: none;
   font-size: 1rem;
+}
+
+.usuario-header {
+  margin-left: 15px;
+  font-weight: 600;
 }
 
 .menu a:hover {
@@ -74,6 +93,41 @@ a {
   text-align: center;
   padding: 20px 10px;
   margin-top: 40px;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-social {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-twitter-icon {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+}
+
+.footer-twitter-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: #e5e7eb;
+}
+
+.footer a {
+  color: #e5e7eb;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
 }
 
 .muted {
@@ -222,6 +276,20 @@ a {
 .btn-wish.active {
   background: var(--link);
   color: #fff;
+}
+
+.product-img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover .product-img {
+  transform: scale(1.03);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.18);
 }
 
 .product-img {

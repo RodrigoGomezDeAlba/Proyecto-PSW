@@ -1,4 +1,4 @@
-import { API_URL } from "./api.js";
+// Usa API_URL global definido en api.js
 
 document.addEventListener("DOMContentLoaded", ()=>{
   const form = document.getElementById("contact-form");

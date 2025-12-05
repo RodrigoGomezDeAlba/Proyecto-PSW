@@ -1,9 +1,8 @@
-import { apiGetCart, apiAddCartItem, apiUpdateCartItem, apiDeleteCartItem } from "./api.js";
+// Funciones de carrito que consumen el backend usando los helpers globales de api.js
 
-// carrito.js
-async function obtenerCarrito(){ return apiGetCart(); }
-
-import { obtenerToken } from "./api.js"; // si no lo tienes ya aquí
+async function obtenerCarrito() {
+  return apiGetCart();
+}
 
 async function agregarAlCarrito(productId, qty = 1) {
   const token = obtenerToken();
@@ -15,16 +14,14 @@ async function agregarAlCarrito(productId, qty = 1) {
 
   try {
     await apiAddCartItem(productId, qty);
-    Swal.fire("Listo", "Producto agregado al carrito", "success");
+    await Swal.fire("Listo", "Producto agregado al carrito", "success");
     await renderCarrito(); // recarga desde el backend
   } catch (err) {
-    Swal.fire("Error", err.message || "No se pudo agregar al carrito", "error");
+    await Swal.fire("Error", err.message || "No se pudo agregar al carrito", "error");
   }
 }
 
-
-
-document.addEventListener("DOMContentLoaded", ()=>{
+document.addEventListener("DOMContentLoaded", () => {
   const cont = document.getElementById("carrito-list");
   if (!cont) return;
   renderCarrito();
@@ -84,20 +81,29 @@ async function renderCarrito() {
   actualizarResumenDesdeItems(items);
 }
 
-
 function actualizarResumenDesdeItems(items) {
   const subtotal = items.reduce((s, it) => s + it.subtotal, 0);
   const tax = subtotal * 0.16;
   const ship = subtotal > 1000 ? 0 : 50;
   const total = subtotal + tax + ship;
 
-  document.getElementById("sub") && (document.getElementById("sub").textContent = subtotal.toFixed(2));
-  document.getElementById("tax") && (document.getElementById("tax").textContent = tax.toFixed(2));
-  document.getElementById("ship") && (document.getElementById("ship").textContent = ship.toFixed(2));
-  document.getElementById("total") && (document.getElementById("total").textContent = total.toFixed(2));
+  const subEl = document.getElementById("sub");
+  const taxEl = document.getElementById("tax");
+  const shipEl = document.getElementById("ship");
+  const totalEl = document.getElementById("total");
+
+  if (subEl) subEl.textContent = subtotal.toFixed(2);
+  if (taxEl) taxEl.textContent = tax.toFixed(2);
+  if (shipEl) shipEl.textContent = ship.toFixed(2);
+  if (totalEl) totalEl.textContent = total.toFixed(2);
 
   const count = items.reduce((s, it) => s + it.cantidad, 0);
   document.querySelectorAll("#badge-count, #badge-count-2").forEach(el => {
     el.textContent = count;
   });
 }
+
+// Exponer algunas funciones si se necesitan en otros scripts
+window.agregarAlCarrito = agregarAlCarrito;
+window.actualizarResumenDesdeItems = actualizarResumenDesdeItems;
+window.renderCarrito = renderCarrito;

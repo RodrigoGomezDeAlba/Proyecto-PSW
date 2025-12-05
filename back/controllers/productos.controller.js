@@ -50,7 +50,7 @@ async function obtenerProductoPorId(req, res) {
 // POST /api/admin/products
 async function crearProducto(req, res) {
   try {
-    const { nombre, descripcion, categoria, precio, inventario, imagen_url } = req.body;
+    const { nombre, descripcion, categoria, precio, inventario, imagen_url, oferta } = req.body;
 
     if (!nombre || !categoria || precio == null || inventario == null) {
       return res.status(400).json({
@@ -65,6 +65,7 @@ async function crearProducto(req, res) {
       precio,
       inventario,
       imagen_url,
+      oferta: oferta ? 1 : 0,
     });
 
     return res.status(201).json(nuevo);

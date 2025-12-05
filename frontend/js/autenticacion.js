@@ -1,7 +1,6 @@
-import { API_URL, guardarToken } from './api.js';
-import { cargarCaptcha } from './captcha.js';
+// Autenticación usando el backend y los helpers globales de api.js
 
-export async function registrarUsuario(event) {
+async function registrarUsuario(event) {
   event.preventDefault();
 
   const nombre = document.getElementById("nombre").value;
@@ -10,14 +9,18 @@ export async function registrarUsuario(event) {
   const password2 = document.getElementById("password2").value;
 
   if (password1 !== password2) {
-    alert("Las contraseñas no coinciden");
+    if (window.Swal) {
+      Swal.fire("Error", "Las contraseñas no coinciden", "error");
+    } else {
+      alert("Las contraseñas no coinciden");
+    }
     return;
   }
 
   const datos = {
     nombre,
     email,
-    contrasena: password1      
+    contrasena: password1
   };
 
   const resp = await fetch(`${API_URL}/api/auth/register`, {
@@ -29,21 +32,29 @@ export async function registrarUsuario(event) {
   const data = await resp.json();
 
   if (!resp.ok) {
-    alert(data.message || data.error || "Error en el registro");
+    const msg = data.message || data.error || "Error en el registro";
+    if (window.Swal) {
+      Swal.fire("Error", msg, "error");
+    } else {
+      alert(msg);
+    }
     return;
   }
 
-  alert("Registro exitoso");
+  if (window.Swal) {
+    await Swal.fire("Registro exitoso", "Ahora puedes iniciar sesión", "success");
+  } else {
+    alert("Registro exitoso");
+  }
   window.location.href = "login.html";
 }
 
-export async function iniciarSesion(event) {
+async function iniciarSesion(event) {
     event.preventDefault();
 
     const datos = {
         email: document.getElementById("email").value,
-        password: document.getElementById("password").value,
-        captcha: document.getElementById("captcha").value
+        contrasena: document.getElementById("password").value
     };
 
     const resp = await fetch(`${API_URL}/api/auth/login`, {
@@ -55,18 +66,26 @@ export async function iniciarSesion(event) {
     const data = await resp.json();
 
     if (!resp.ok) {
-        alert(data.error || "Credenciales incorrectas");
-        cargarCaptcha(); 
+        const msg = data.error || "Credenciales incorrectas";
+        if (window.Swal) {
+          Swal.fire("Error", msg, "error");
+        } else {
+          alert(msg);
+        }
         return;
     }
 
     guardarToken(data.token);
 
-    alert("Bienvenido");
+    if (window.Swal) {
+      await Swal.fire("Bienvenido", "Has iniciado sesión correctamente", "success");
+    } else {
+      alert("Bienvenido");
+    }
     window.location.href = "index.html";
 }
 
-export async function enviarRecuperacion(event) {
+async function enviarRecuperacion(event) {
     event.preventDefault();
 
     const email = document.getElementById("email").value;
@@ -80,11 +99,24 @@ export async function enviarRecuperacion(event) {
     const data = await resp.json();
 
     if (!resp.ok) {
-        alert(data.error || "Error");
+        const msg = data.error || "Error";
+        if (window.Swal) {
+          Swal.fire("Error", msg, "error");
+        } else {
+          alert(msg);
+        }
         return;
     }
 
-    alert("Se envió un correo con instrucciones");
+    if (window.Swal) {
+      await Swal.fire(
+        "Recuperación enviada",
+        "Se envió un correo con instrucciones para restablecer tu contraseña",
+        "success"
+      );
+    } else {
+      alert("Se envió un correo con instrucciones");
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -93,8 +125,13 @@ document.addEventListener("DOMContentLoaded", () => {
     formRegistro.addEventListener("submit", registrarUsuario);
   }
 
-  const formLogin = document.getElementById("form-login");
-  if (formLogin) {
-    formLogin.addEventListener("submit", iniciarSesion);
+  const formRecuperar = document.getElementById("form-recuperar");
+  if (formRecuperar) {
+    formRecuperar.addEventListener("submit", enviarRecuperacion);
   }
 });
+
+// Exponer funciones si se quieren usar desde otros scripts
+window.registrarUsuario = registrarUsuario;
+window.iniciarSesion = iniciarSesion;
+window.enviarRecuperacion = enviarRecuperacion;

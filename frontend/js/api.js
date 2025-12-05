@@ -1,20 +1,22 @@
-export const API_URL = "https://proyectopswbotellonesmx.onrender.com";
+// Helper global para consumir el backend desde cualquier página del frontend
+// Se expone todo en window para evitar problemas con ES modules en los <script>
 
-export function guardarToken(token) {
-    localStorage.setItem("token", token);
+const API_URL = "https://proyectopswbotellonesmx.onrender.com";
+
+function guardarToken(token) {
+  localStorage.setItem("token", token);
 }
 
-export function obtenerToken() {
-    return localStorage.getItem("token");
+function obtenerToken() {
+  return localStorage.getItem("token");
 }
 
-export function cerrarSesion() {
-    localStorage.removeItem("token");
-    window.location.href = "login.html";
+function cerrarSesion() {
+  localStorage.removeItem("token");
+  window.location.href = "login.html";
 }
 
-
-export async function apiFetch(path, options = {}) {
+async function apiFetch(path, options = {}) {
   const token = obtenerToken();
   const headers = {
     "Content-Type": "application/json",
@@ -38,32 +40,44 @@ export async function apiFetch(path, options = {}) {
 
 // --- Carrito API ---
 
-export async function apiGetCart() {
+async function apiGetCart() {
   return apiFetch("/api/cart", { method: "GET" });
 }
 
-export async function apiAddCartItem(productoId, cantidad = 1) {
+async function apiAddCartItem(productoId, cantidad = 1) {
   return apiFetch("/api/cart/items", {
     method: "POST",
     body: JSON.stringify({ producto_id: productoId, cantidad })
   });
 }
 
-export async function apiUpdateCartItem(itemId, cantidad) {
+async function apiUpdateCartItem(itemId, cantidad) {
   return apiFetch(`/api/cart/items/${itemId}`, {
     method: "PATCH",
     body: JSON.stringify({ cantidad })
   });
 }
 
-export async function apiDeleteCartItem(itemId) {
+async function apiDeleteCartItem(itemId) {
   return apiFetch(`/api/cart/items/${itemId}`, {
     method: "DELETE"
   });
 }
 
-export async function apiClearCart() {
+async function apiClearCart() {
   return apiFetch("/api/cart", {
     method: "DELETE"
   });
 }
+
+// Exponer helpers en window para que otros scripts los usen
+window.API_URL = API_URL;
+window.guardarToken = guardarToken;
+window.obtenerToken = obtenerToken;
+window.cerrarSesion = cerrarSesion;
+window.apiFetch = apiFetch;
+window.apiGetCart = apiGetCart;
+window.apiAddCartItem = apiAddCartItem;
+window.apiUpdateCartItem = apiUpdateCartItem;
+window.apiDeleteCartItem = apiDeleteCartItem;
+window.apiClearCart = apiClearCart;
