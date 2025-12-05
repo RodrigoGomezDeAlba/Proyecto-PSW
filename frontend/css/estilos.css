@@ -57,11 +57,21 @@ html, body {
   object-fit: contain;
 }
 
+.lema-sitio {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
 .menu a {
   color: var(--header-text);
   margin-left: 15px;
   text-decoration: none;
   font-size: 1rem;
+}
+
+.usuario-header {
+  margin-left: 15px;
+  font-weight: 600;
 }
 
 .menu a:hover {

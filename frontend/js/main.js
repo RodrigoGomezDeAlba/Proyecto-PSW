@@ -1,3 +1,5 @@
+// Usa los helpers globales de api.js para consumir el backend
+
 document.addEventListener("DOMContentLoaded", async () => {
   await cargarProductosDesdeBackend();
   await actualizarBadge();
@@ -33,7 +35,7 @@ function obtenerProductos() {
 
 async function actualizarBadge() {
   try {
-    const items = await apiGetCart();            // cada item tiene 'cantidad'
+    const items = await apiGetCart(); // cada item tiene 'cantidad'
     const count = items.reduce((s, it) => s + (it.cantidad || 0), 0);
     document
       .querySelectorAll("#badge-count, #badge-count-2")
@@ -46,26 +48,60 @@ async function actualizarBadge() {
   }
 }
 
+function obtenerUsuarioActual() {
+  try {
+    const raw = localStorage.getItem("usuario");
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
 function actualizarUsuarioHeader() {
   const nav = document.querySelector(".menu");
   if (!nav) return;
 
-  const linkLogin = nav.querySelector('a[href="login.html"]');
-  if (!linkLogin) return;
+  const linkLogin = nav.querySelector('a[href="login.html"], a[href="login.html#"]');
 
-  const token = obtenerToken();
+  // Limpiar posibles elementos previos para evitar duplicados
+  const existenteUsuario = nav.querySelector(".usuario-header");
+  if (existenteUsuario) existenteUsuario.remove();
+  const existenteLogout = nav.querySelector(".logout-link");
+  if (existenteLogout) existenteLogout.remove();
+
+  const token = typeof obtenerToken === "function" ? obtenerToken() : null;
+
   if (!token) {
-    linkLogin.textContent = "Login";
-    linkLogin.href = "login.html";
+    if (linkLogin) {
+      linkLogin.style.display = "";
+      linkLogin.textContent = "Login";
+      linkLogin.href = "login.html";
+    }
     return;
   }
 
-  linkLogin.textContent = "Cerrar sesión";
-  linkLogin.href = "#";
-  linkLogin.addEventListener(
+  const usuario = obtenerUsuarioActual();
+  const nombre = usuario && usuario.nombre ? usuario.nombre : "Usuario";
+
+  // Ocultar el enlace de login
+  if (linkLogin) {
+    linkLogin.style.display = "none";
+  }
+
+  const spanUsuario = document.createElement("span");
+  spanUsuario.className = "usuario-header";
+  spanUsuario.textContent = nombre;
+
+  const logoutLink = document.createElement("a");
+  logoutLink.href = "#";
+  logoutLink.textContent = "Cerrar sesión";
+  logoutLink.className = "logout-link";
+
+  logoutLink.addEventListener(
     "click",
     async e => {
       e.preventDefault();
+      let confirmar = true;
       if (window.Swal) {
         const res = await Swal.fire({
           title: "Cerrar sesión",
@@ -75,12 +111,24 @@ function actualizarUsuarioHeader() {
           confirmButtonText: "Sí, salir",
           cancelButtonText: "Cancelar",
         });
-        if (!res.isConfirmed) return;
+        confirmar = res.isConfirmed;
       }
-      cerrarSesion();
+      if (!confirmar) return;
+
+      if (typeof cerrarSesion === "function") {
+        cerrarSesion();
+      } else {
+        localStorage.removeItem("token");
+        localStorage.removeItem("usuario");
+      }
+
+      window.location.href = "index.html";
     },
     { once: true }
   );
+
+  nav.appendChild(spanUsuario);
+  nav.appendChild(logoutLink);
 }
 
 function cargarDestacados() {
@@ -176,7 +224,7 @@ function renderCatalogo() {
     inputMax && inputMax.value !== "" ? parseFloat(inputMax.value) : null;
   const soloOferta = chkOferta ? chkOferta.checked : false;
 
-  let filtrados = productos.filter(p => {
+  const filtrados = productos.filter(p => {
     if (categoria !== "todos" && p.categoria !== categoria) return false;
     if (min !== null && p.precio < min) return false;
     if (max !== null && p.precio > max) return false;
@@ -194,6 +242,7 @@ function renderCatalogo() {
   filtrados.forEach(p => {
     const card = document.createElement("div");
     card.className = "card";
+
     const enWishlist = isInWishlist(p.id);
     const etiquetaOferta = p.oferta
       ? '<span class="tag-oferta">En oferta</span>'
@@ -239,6 +288,7 @@ function renderCatalogo() {
   );
 }
 
+
 function getUsuarioEmail() {
   return localStorage.getItem("userEmail") || null;
 }
@@ -268,16 +318,16 @@ function isInWishlist(id) {
 }
 
 async function toggleWishlist(id) {
-  const token = obtenerToken();
+  const token = typeof obtenerToken === "function" ? obtenerToken() : null;
   if (!token) {
     if (window.Swal) {
       await Swal.fire(
-        "Inicia sesión",
-        "Debes iniciar sesión para usar la lista de deseos.",
+        "Inicia sesi�n",
+        "Debes iniciar sesi�n para usar la lista de deseos.",
         "info"
       );
     } else {
-      alert("Debes iniciar sesión para usar la lista de deseos.");
+      alert("Debes iniciar sesi�n para usar la lista de deseos.");
     }
     window.location.href = "login.html";
     return;
@@ -313,7 +363,7 @@ function renderWishlist(cont) {
   const deseados = productos.filter(p => ids.includes(p.id));
   if (!deseados.length) {
     cont.innerHTML =
-      "<p>Los productos de tu lista ya no están disponibles.</p>";
+      "<p>Los productos de tu lista ya no est�n disponibles.</p>";
     return;
   }
 
@@ -336,7 +386,7 @@ function renderWishlist(cont) {
         <button class="btn agregar" data-id="${p.id}" ${
       p.stock === 0 ? "disabled" : ""
     }>Agregar al carrito</button>
-        <button class="btn-wish active" data-id="${p.id}" aria-label="Quitar de lista de deseos">♥</button>
+        <button class="btn-wish active" data-id="${p.id}" aria-label="Quitar de lista de deseos">?</button>
       </div>
     `;
     cont.appendChild(card);
