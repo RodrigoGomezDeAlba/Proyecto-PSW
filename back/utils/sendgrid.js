@@ -3,6 +3,7 @@ const { company } = require('../data/company');
 const SG_API_KEY = process.env.SENDGRID_API_KEY;
 const SG_FROM = process.env.SENDGRID_FROM;
 const SG_FROM_NAME = process.env.SENDGRID_FROM_NAME || company.name;
+const FRONTEND_URL = process.env.FRONTEND_URL || 'https://botellonesmxpsw-one.vercel.app';
 
 async function sendWithSendGrid({ to, subject, html, attachments = [] }) {
   if (!SG_API_KEY || !SG_FROM) {
@@ -122,13 +123,17 @@ async function enviarCorreoCompraHTTP({ nombre, email, items = [], total }) {
 }
 
 async function enviarCorreoRecuperacionHTTP({ email, token }) {
+  const link = `${FRONTEND_URL}/restablecer.html?token=${encodeURIComponent(token)}`;
+
   const html = `
     <div style="font-family: Arial, sans-serif;">
       <h2>${company.name} - Recuperación de contraseña</h2>
       <p><em>"${company.slogan}"</em></p>
       <p>Hemos recibido una solicitud para restablecer la contraseña de tu cuenta asociada a este correo.</p>
-      <p>Para completar el proceso, utiliza el siguiente código de recuperación (es válido por 1 hora):</p>
+      <p>Para completar el proceso, puedes usar el siguiente <strong>código de recuperación</strong> (válido por 1 hora):</p>
       <p style="font-size: 1.2rem;"><strong>${token}</strong></p>
+      <p>O bien, haz clic en el siguiente enlace para ir directamente a la pantalla de restablecer contraseña:</p>
+      <p><a href="${link}">${link}</a></p>
       <p>Si tú no solicitaste este cambio, puedes ignorar este mensaje.</p>
     </div>
   `;

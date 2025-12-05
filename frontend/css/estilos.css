@@ -200,6 +200,20 @@ a {
   display: none;
 }
 
+.carrito-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.carrito-layout #carrito-list {
+  flex: 2;
+}
+
+.carrito-layout #resumen-compra {
+  flex: 1;
+}
+
 #carrito-list {
   display: flex;
   flex-direction: column;
@@ -318,7 +332,7 @@ body.tema-oscuro .admin-stats {
   border-color: #1e293b;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 800px) {
   .menu a {
     margin-left: 10px;
     font-size: 0.95rem;
@@ -326,6 +340,10 @@ body.tema-oscuro .admin-stats {
 
   .contenido {
     padding: 20px;
+  }
+
+  .carrito-layout {
+    flex-direction: column;
   }
 
   #carrito-list .card {

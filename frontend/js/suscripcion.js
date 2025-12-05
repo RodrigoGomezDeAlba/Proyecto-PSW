@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      const okMsg = "Te hemos suscrito y (si el correo está configurado) se envió tu cupón a tu email.";
+      const okMsg = "Te hemos suscrito y se envió tu cupón a tu email.";
       if (window.Swal) {
         await Swal.fire("¡Listo!", okMsg, "success");
       } else {

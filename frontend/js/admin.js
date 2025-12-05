@@ -1,6 +1,30 @@
 let productoEditandoId = null;
 
-document.addEventListener("DOMContentLoaded", ()=>{
+document.addEventListener("DOMContentLoaded", async ()=>{
+  // Verificar que el usuario esté autenticado y sea administrador
+  const tieneHelpersAuth = typeof obtenerToken === "function";
+  const token = tieneHelpersAuth ? obtenerToken() : null;
+
+  let usuario = null;
+  try {
+    const raw = localStorage.getItem("usuario");
+    usuario = raw ? JSON.parse(raw) : null;
+  } catch {
+    usuario = null;
+  }
+
+  if (!token || !usuario || usuario.rol !== "admin") {
+    if (window.Swal) {
+      await Swal.fire(
+        "Acceso restringido",
+        "Esta sección es solo para administradores. Inicia sesión con una cuenta de administrador.",
+        "warning"
+      );
+    }
+    window.location.href = "index.html";
+    return;
+  }
+
   const form = document.getElementById("form-producto");
   const lista = document.getElementById("lista-productos");
   if (!lista || !form) return;
