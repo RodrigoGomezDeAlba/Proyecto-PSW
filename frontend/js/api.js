@@ -32,6 +32,13 @@ async function apiFetch(path, options = {}) {
   if (!resp.ok) {
     const data = await resp.json().catch(() => ({}));
     const msg = data.message || data.msg || data.error || `HTTP ${resp.status}`;
+
+    // Si el token expiro, limpiamos 
+    if (resp.status === 401 && msg.includes("expirado")) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("usuario");
+    }
+
     throw new Error(msg);
   }
 

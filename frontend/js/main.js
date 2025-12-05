@@ -14,14 +14,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function cargarProductosDesdeBackend() {
   try {
     const productos = await apiFetch("/api/products");
+
     // Adaptar al formato que usa el frontend (asegurando tipos numéricos)
-    window.PRODUCTOS = productos.map(p => ({
-      ...p,
-      precio: Number(p.precio ?? 0),
-      stock: Number(p.inventario ?? 0),
-      oferta: !!p.oferta,
-    }));
-    console.log("Productos cargados desde backend:", window.PRODUCTOS);
+    window.PRODUCTOS = productos.map(p => {
+      const precioNum = Number(p.precio);          // aquí convertimos
+      const stockNum  = Number(p.inventario);
+
+      return {
+        ...p,
+        precio: isNaN(precioNum) ? 0 : precioNum,
+        stock:  isNaN(stockNum)  ? 0 : stockNum,
+        oferta: !!p.oferta,
+      };
+    });
+
+    console.log("Productos cargados desde backend (normalizados):", window.PRODUCTOS);
   } catch (err) {
     console.error("Error cargando productos desde el backend", err);
     window.PRODUCTOS = [];
@@ -248,21 +255,24 @@ function renderCatalogo() {
     return;
   }
 
-  filtrados.forEach(p=>{
+    filtrados.forEach(p => {
     const card = document.createElement("div");
     card.className = "card";
 
-    const imgSrc = p.imagen_url && p.imagen_url.trim() !== "" 
-      ? p.imagen_url 
+    const imgSrc = p.imagen_url && p.imagen_url.trim() !== ""
+      ? p.imagen_url
       : "img/logo.png";
+
+    const precioNum = Number(p.precio);
+    const precioMostrar = isNaN(precioNum) ? 0 : precioNum;
 
     card.innerHTML = `
       <img src="${imgSrc}" alt="${p.nombre}" class="card-img" />
-      <h4>${p.nombre} ${p.stock===0?'<span style="color:red">(Sin stock)</span>':''}</h4>
+      <h4>${p.nombre} ${p.stock === 0 ? '<span style="color:red">(Sin stock)</span>' : ''}</h4>
       <p>${p.descripcion || ""}</p>
-      <p><strong>$${p.precio.toFixed(2)}</strong></p>
+      <p><strong>$${precioMostrar.toFixed(2)}</strong></p>
       <p>Stock: ${p.stock}</p>
-      <button class="btn agregar" data-id="${p.id}" ${p.stock===0?"disabled":""}>Agregar</button>
+      <button class="btn agregar" data-id="${p.id}" ${p.stock === 0 ? "disabled" : ""}>Agregar</button>
     `;
     cont.appendChild(card);
   });
@@ -360,7 +370,7 @@ function renderWishlist(cont) {
   const deseados = productos.filter(p => ids.includes(p.id));
   if (!deseados.length) {
     cont.innerHTML =
-      "<p>Los productos de tu lista ya no est�n disponibles.</p>";
+      "<p>Los productos de tu lista ya no estan disponibles.</p>";
     return;
   }
 
