@@ -3,7 +3,7 @@
 
 const company = {
   name: 'BotellonesMX',
-  slogan: 'Cada familia tiene una historia... aquí comienza la tuya',
+  slogan: 'No hay nada como tomar agua en una buena botella',
 };
 
 module.exports = { company };
