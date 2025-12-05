@@ -1,8 +1,8 @@
-import { apiFetch, apiGetCart } from "./api.js";
+// Usa los helpers globales de api.js para consumir el backend
 
-document.addEventListener("DOMContentLoaded", async ()=>{
+document.addEventListener("DOMContentLoaded", async () => {
   try {
-    // 1) Cargar productos  del backend
+    // 1) Cargar productos del backend
     const productos = await apiFetch("/api/products");
     // productos viene con campos: id, nombre, descripcion, categoria, precio, inventario, imagen_url
     const adaptados = productos.map(p => ({

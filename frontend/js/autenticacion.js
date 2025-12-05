@@ -1,7 +1,6 @@
-import { API_URL, guardarToken } from './api.js';
-import { cargarCaptcha } from './captcha.js';
+// Autenticación usando el backend y los helpers globales de api.js
 
-export async function registrarUsuario(event) {
+async function registrarUsuario(event) {
   event.preventDefault();
 
   const nombre = document.getElementById("nombre").value;
@@ -17,7 +16,7 @@ export async function registrarUsuario(event) {
   const datos = {
     nombre,
     email,
-    contrasena: password1      
+    contrasena: password1
   };
 
   const resp = await fetch(`${API_URL}/api/auth/register`, {
@@ -37,13 +36,12 @@ export async function registrarUsuario(event) {
   window.location.href = "login.html";
 }
 
-export async function iniciarSesion(event) {
+async function iniciarSesion(event) {
     event.preventDefault();
 
     const datos = {
         email: document.getElementById("email").value,
-        password: document.getElementById("password").value,
-        captcha: document.getElementById("captcha").value
+        contrasena: document.getElementById("password").value
     };
 
     const resp = await fetch(`${API_URL}/api/auth/login`, {
@@ -56,7 +54,6 @@ export async function iniciarSesion(event) {
 
     if (!resp.ok) {
         alert(data.error || "Credenciales incorrectas");
-        cargarCaptcha(); 
         return;
     }
 
@@ -66,7 +63,7 @@ export async function iniciarSesion(event) {
     window.location.href = "index.html";
 }
 
-export async function enviarRecuperacion(event) {
+async function enviarRecuperacion(event) {
     event.preventDefault();
 
     const email = document.getElementById("email").value;
@@ -93,8 +90,13 @@ document.addEventListener("DOMContentLoaded", () => {
     formRegistro.addEventListener("submit", registrarUsuario);
   }
 
-  const formLogin = document.getElementById("form-login");
-  if (formLogin) {
-    formLogin.addEventListener("submit", iniciarSesion);
+  const formRecuperar = document.getElementById("form-recuperar");
+  if (formRecuperar) {
+    formRecuperar.addEventListener("submit", enviarRecuperacion);
   }
 });
+
+// Exponer funciones si se quieren usar desde otros scripts
+window.registrarUsuario = registrarUsuario;
+window.iniciarSesion = iniciarSesion;
+window.enviarRecuperacion = enviarRecuperacion;

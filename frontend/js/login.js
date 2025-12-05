@@ -1,44 +1,63 @@
-import { API_URL } from "./api.js";
+// Login con CAPTCHA consumiendo el backend desplegado
 
-const imgCaptcha = document.getElementById("captcha-img");
+document.addEventListener("DOMContentLoaded", () => {
+  if (typeof cargarCaptcha === "function") {
+    cargarCaptcha();
+  }
 
-async function cargarCaptcha() {
-    imgCaptcha.src = `${API_URL}/api/auth/captcha?${Date.now()}`;
-}
-cargarCaptcha();
+  const form = document.getElementById("form-login");
+  if (!form) return;
 
-document.getElementById("form-login").addEventListener("submit", async (e) => {
+  const btnRefresh = document.getElementById("btn-refresh-captcha");
+  if (btnRefresh && typeof cargarCaptcha === "function") {
+    btnRefresh.addEventListener("click", (e) => {
+      e.preventDefault();
+      cargarCaptcha();
+    });
+  }
+
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
-    const captcha = document.getElementById("captcha-input").value;
+    const captcha = document.getElementById("captcha-input").value.trim();
+
+    if (!email || !password || !captcha) {
+      return Swal.fire("Campos incompletos", "Ingresa email, contraseña y captcha.", "warning");
+    }
 
     try {
-        const resp = await fetch(`${API_URL}/api/auth/login`, {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({ email, password, captcha })
-        });
+      const resp = await fetch(`${API_URL}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, contrasena: password, captcha })
+      });
 
-        const data = await resp.json();
+      const data = await resp.json();
 
-        if (data.bloqueado) {
-            return Swal.fire("Cuenta bloqueada", "Espera 5 minutos", "error");
+      if (!resp.ok) {
+        if (typeof cargarCaptcha === "function") {
+          cargarCaptcha();
         }
+        const msg = data.message || data.msg || data.error || "Credenciales o captcha incorrectos";
+        return Swal.fire("Error", msg, "error");
+      }
 
-        if (!resp.ok) {
-            cargarCaptcha(); 
-            return Swal.fire("Error", data.msg || "Credenciales incorrectas", "error");
-        }
-
+      if (typeof guardarToken === "function") {
+        guardarToken(data.token);
+      } else {
         localStorage.setItem("token", data.token);
+      }
+      if (data.usuario && data.usuario.nombre) {
         localStorage.setItem("usuario", data.usuario.nombre);
+      }
 
-        Swal.fire("Bienvenido", data.usuario.nombre, "success")
-            .then(() => window.location.href = "index.html");
-
+      Swal.fire("Bienvenido", data.usuario?.nombre || "", "success").then(() => {
+        window.location.href = "index.html";
+      });
     } catch (err) {
-        Swal.fire("Error", "No se pudo conectar con el servidor", "error");
+      Swal.fire("Error", "No se pudo conectar con el servidor", "error");
     }
+  });
 });
