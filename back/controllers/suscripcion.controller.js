@@ -9,7 +9,7 @@ const {
 
 const assetsPath = path.join(__dirname, '..', 'assets');
 
-// SUSCRIPCIÓN: guarda en BD + envía correo con CUPÓN
+// se guarda en BD y envía correo con cupon
 async function suscribirse(req, res) {
   try {
     const { email } = req.body;
@@ -25,11 +25,11 @@ async function suscribirse(req, res) {
 
     const nuevaSuscripcionId = await SuscripcionModel.crearSuscripcion(email);
 
-    // 📧 Correo de gracias por suscribirse (vía SendGrid HTTP; si falla, no rompemos la API)
+    // Correo de gracias por suscribirse 
     try {
       await enviarCorreoSuscripcionHTTP(email);
     } catch (mailErr) {
-      console.error('⚠️ Error enviando correo de suscripción (SendGrid):', mailErr);
+      console.error('Error enviando correo de suscripción:', mailErr);
     }
 
     return res
@@ -41,7 +41,7 @@ async function suscribirse(req, res) {
   }
 }
 
-// CONTACTO: guarda en BD + envía correo “En breve te atenderemos”
+// Se guarda en BD 
 async function contacto(req, res) {
   try {
     const { nombre, email, mensaje } = req.body;
@@ -58,11 +58,11 @@ async function contacto(req, res) {
       mensaje
     );
 
-    // 📧 Correo de respuesta automática (vía SendGrid HTTP; no debe romper la API si falla)
+    // Correo de respuesta automática
     try {
       await enviarCorreoContactoHTTP({ nombre, email, mensaje });
     } catch (mailErr) {
-      console.error('⚠️ Error enviando correo de contacto (SendGrid):', mailErr);
+      console.error('Error enviando correo de contacto:', mailErr);
     }
 
     return res
