@@ -322,12 +322,12 @@ async function toggleWishlist(id) {
   if (!token) {
     if (window.Swal) {
       await Swal.fire(
-        "Inicia sesión",
-        "Debes iniciar sesión para usar la lista de deseos.",
+        "Inicia sesiï¿½n",
+        "Debes iniciar sesiï¿½n para usar la lista de deseos.",
         "info"
       );
     } else {
-      alert("Debes iniciar sesión para usar la lista de deseos.");
+      alert("Debes iniciar sesiï¿½n para usar la lista de deseos.");
     }
     window.location.href = "login.html";
     return;
@@ -363,7 +363,7 @@ function renderWishlist(cont) {
   const deseados = productos.filter(p => ids.includes(p.id));
   if (!deseados.length) {
     cont.innerHTML =
-      "<p>Los productos de tu lista ya no están disponibles.</p>";
+      "<p>Los productos de tu lista ya no estï¿½n disponibles.</p>";
     return;
   }
 
