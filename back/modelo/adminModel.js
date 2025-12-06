@@ -5,8 +5,6 @@ async function resumenVentas() {
     `SELECT
             COUNT(*)            AS numero_ordenes,
             IFNULL(SUM(total), 0) AS total_ventas,
-            MIN(creada_en)      AS primera_venta,
-            MAX(creada_en)      AS ultima_venta
             FROM ordenes
             WHERE estado = 'creada'`
   );

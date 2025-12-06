@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const { company } = require('../data/company');
 const { buildPurchasePdf } = require('./pdf');
 
@@ -5,6 +7,10 @@ const SG_API_KEY = process.env.SENDGRID_API_KEY;
 const SG_FROM = process.env.SENDGRID_FROM;
 const SG_FROM_NAME = process.env.SENDGRID_FROM_NAME || company.name;
 const FRONTEND_URL = process.env.FRONTEND_URL || 'https://botellonesmxpsw-one.vercel.app';
+
+// Ruta local a la imagen del cupón que se adjuntará en el correo de suscripción
+// Asegúrate de colocar el archivo en back/assets/cupon-botellones10.png
+const CUPON_IMAGE_PATH = path.join(__dirname, '..', 'assets', 'cupon-botellones10.png');
 
 async function sendWithSendGrid({ to, subject, html, attachments = [] }) {
   if (!SG_API_KEY || !SG_FROM) {
@@ -59,19 +65,36 @@ async function sendWithSendGrid({ to, subject, html, attachments = [] }) {
 async function enviarCorreoSuscripcionHTTP(email) {
   const logoUrl = `${FRONTEND_URL}/img/logo.png`;
   const html = `
-    <div style="font-family: Arial, sans-serif; text-align:center;">
-      <img src="${logoUrl}" alt="${company.name}" style="max-width:120px; margin-bottom:8px;" />
+    <div style="font-family: Arial, sans-serif;">
+      <img src="https://proyectopswbotellonesmx.onrender.com/img/logo-email.png"
+           alt="${company.name}"
+           style="max-width:150px; margin-bottom:10px;" />
       <h2>${company.name}</h2>
       <p><em>"${company.slogan}"</em></p>
-      <p>Gracias por suscribirte. Aquí tienes tu cupón de compra (úsalo en tu próxima compra):</p>
-      <p style="font-size:1.3rem;"><strong>CUPÓN: BOTELLONES10</strong></p>
+      <p>Gracias por suscribirte. Te enviamos tu cupón en la imagen adjunta.
+         Úsalo en tu próxima compra:</p>
+      <p><strong>CUPÓN: BOTELLONES10</strong></p>
     </div>
   `;
+
+  let attachments = [];
+  try {
+    // Leer la imagen del cupón como base64 para adjuntarla en el correo
+    const cuponB64 = fs.readFileSync(CUPON_IMAGE_PATH).toString('base64');
+    attachments.push({
+      content: cuponB64,
+      filename: 'cupon-botellones10.png',
+      type: 'image/png',
+    });
+  } catch (err) {
+    console.error('No se pudo leer la imagen del cupón para adjuntar:', err.message);
+  }
 
   await sendWithSendGrid({
     to: email,
     subject: '¡Gracias por suscribirte!',
     html,
+    attachments,
   });
 }
 
@@ -97,8 +120,19 @@ async function enviarCorreoContactoHTTP({ nombre, email, mensaje }) {
   });
 }
 
-async function enviarCorreoCompraHTTP({ nombre, email, items = [], total }) {
-  const logoUrl = `${FRONTEND_URL}/img/logo.png`;
+async function enviarCorreoCompraHTTP({
+  nombre,
+  email,
+  items = [],
+  total,
+  subtotal,
+  tax,
+  ship,
+  discount,
+  cupon,
+  fecha,
+  metodoPago,
+}) {
   const filas = items
     .map(
       (it, idx) =>
@@ -108,22 +142,46 @@ async function enviarCorreoCompraHTTP({ nombre, email, items = [], total }) {
     )
     .join('');
 
+  const fechaObj = fecha ? new Date(fecha) : new Date();
+  const fechaTexto = fechaObj.toLocaleDateString('es-MX');
+  const horaTexto = fechaObj.toLocaleTimeString('es-MX');
+
+  const subNum = Number(subtotal ?? 0);
+  const taxNum = Number(tax ?? 0);
+  const shipNum = Number(ship ?? 0);
+  const discountNum = Number(discount ?? 0);
+  const totalNum = Number(total ?? subNum + taxNum + shipNum - discountNum);
+  const cuponTexto = (cupon || '').toString().trim();
+
   const html = `
     <div style="font-family: Arial, sans-serif;">
-      <div style="text-align:center; margin-bottom:8px;">
-        <img src="${logoUrl}" alt="${company.name}" style="max-width:120px;" />
+      <div style="text-align:center; margin-bottom:10px;">
+        <img src="https://proyectopswbotellonesmx.onrender.com/img/logo-email.png"
+             alt="${company.name}"
+             style="max-width:150px; margin-bottom:10px;" />
+        <h2>${company.name} - Nota de compra</h2>
+        <p><em>"${company.slogan}"</em></p>
       </div>
-      <h2>${company.name} - Nota de compra</h2>
-      <p><em>"${company.slogan}"</em></p>
-      <p>Cliente: <strong>${nombre}</strong></p>
+
+      <p><strong>Fecha:</strong> ${fechaTexto}</p>
+      <p><strong>Hora:</strong> ${horaTexto}</p>
+      <p><strong>Cliente:</strong> ${nombre}</p>
+      ${metodoPago ? `<p><strong>Método de pago:</strong> ${metodoPago}</p>` : ''}
+
+      <h3>Detalle de compra</h3>
       <table border="1" cellspacing="0" cellpadding="4" style="border-collapse: collapse; width:100%;">
         <thead>
           <tr><th>#</th><th>Producto</th><th>Cant</th><th>Precio</th><th>Subtotal</th></tr>
         </thead>
         <tbody>${filas}</tbody>
       </table>
-      <p style="margin-top:10px;">Total pagado: <strong>$${Number(total || 0).toFixed(2)}</strong></p>
-      <p style="margin-top:4px; font-size:0.9rem; color:#6b7280;">Se adjunta una copia en PDF como nota de compra.</p>
+
+      <h3 style="margin-top:10px;">Resumen de cobro</h3>
+      <p><strong>Subtotal:</strong> $${subNum.toFixed(2)}</p>
+      <p><strong>Impuestos:</strong> $${taxNum.toFixed(2)}</p>
+      <p><strong>Gastos de envío:</strong> $${shipNum.toFixed(2)}</p>
+      ${cuponTexto ? `<p><strong>Cupón aplicado:</strong> ${cuponTexto} (descuento $${discountNum.toFixed(2)})</p>` : ''}
+      <p><strong>Total general:</strong> $${totalNum.toFixed(2)}</p>
     </div>
   `;
 
