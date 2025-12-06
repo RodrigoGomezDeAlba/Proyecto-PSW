@@ -8,6 +8,9 @@ const SG_FROM = process.env.SENDGRID_FROM;
 const SG_FROM_NAME = process.env.SENDGRID_FROM_NAME || company.name;
 const FRONTEND_URL = process.env.FRONTEND_URL || 'https://botellonesmxpsw-one.vercel.app';
 
+// Logo público servido por el frontend (mismo que se ve en la web)
+const LOGO_URL = `${FRONTEND_URL}/img/logo.png`;
+
 // Ruta local a la imagen del cupón que se adjuntará en el correo de suscripción
 // Asegúrate de colocar el archivo en back/assets/cupon-botellones10.png
 const CUPON_IMAGE_PATH = path.join(__dirname, '..', 'assets', 'cupon-botellones10.png');
@@ -63,10 +66,9 @@ async function sendWithSendGrid({ to, subject, html, attachments = [] }) {
 }
 
 async function enviarCorreoSuscripcionHTTP(email) {
-  const logoUrl = `${FRONTEND_URL}/img/logo.png`;
   const html = `
     <div style="font-family: Arial, sans-serif;">
-      <img src="https://proyectopswbotellonesmx.onrender.com/img/logo-email.png"
+      <img src="${LOGO_URL}"
            alt="${company.name}"
            style="max-width:150px; margin-bottom:10px;" />
       <h2>${company.name}</h2>
@@ -99,11 +101,10 @@ async function enviarCorreoSuscripcionHTTP(email) {
 }
 
 async function enviarCorreoContactoHTTP({ nombre, email, mensaje }) {
-  const logoUrl = `${FRONTEND_URL}/img/logo.png`;
   const html = `
     <div style="font-family: Arial, sans-serif; text-align:left;">
       <div style="text-align:center; margin-bottom:8px;">
-        <img src="${logoUrl}" alt="${company.name}" style="max-width:120px;" />
+        <img src="${LOGO_URL}" alt="${company.name}" style="max-width:120px;" />
       </div>
       <h2>${company.name}</h2>
       <p><em>"${company.slogan}"</em></p>
@@ -156,7 +157,7 @@ async function enviarCorreoCompraHTTP({
   const html = `
     <div style="font-family: Arial, sans-serif;">
       <div style="text-align:center; margin-bottom:10px;">
-        <img src="https://proyectopswbotellonesmx.onrender.com/img/logo-email.png"
+        <img src="${LOGO_URL}"
              alt="${company.name}"
              style="max-width:150px; margin-bottom:10px;" />
         <h2>${company.name} - Nota de compra</h2>
@@ -188,7 +189,19 @@ async function enviarCorreoCompraHTTP({
   // Generar PDF usando pdfkit y adjuntarlo como base64
   let attachments = [];
   try {
-    const pdfBuffer = await buildPurchasePdf({ nombre, email, items, total: Number(total || 0).toFixed(2) });
+    const pdfBuffer = await buildPurchasePdf({
+      nombre,
+      email,
+      items,
+      subtotal: subNum,
+      tax: taxNum,
+      ship: shipNum,
+      discount: discountNum,
+      cupon: cuponTexto,
+      total: totalNum,
+      fecha,
+      metodoPago,
+    });
     attachments.push({
       content: pdfBuffer.toString('base64'),
       filename: 'nota-compra.pdf',

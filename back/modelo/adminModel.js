@@ -3,10 +3,10 @@ const pool = require("../db/conexion");
 async function resumenVentas() {
   const [rows] = await pool.query(
     `SELECT
-            COUNT(*)            AS numero_ordenes,
-            IFNULL(SUM(total), 0) AS total_ventas,
-            FROM ordenes
-            WHERE estado = 'creada'`
+       COUNT(*)              AS numero_ordenes,
+       IFNULL(SUM(total), 0) AS total_ventas
+     FROM ordenes
+     WHERE estado = 'creada'`
   );
   return rows[0];
 }
