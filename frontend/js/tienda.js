@@ -1,6 +1,11 @@
+// Archivo conservado sólo si se requiere para demos locales.
+// El panel de administración real ahora usa las APIs del backend
+// (ver frontend/js/admin.js).
+
 function obtenerProductos(){
   return JSON.parse(localStorage.getItem("productos") || "[]");
 }
+
 function guardarProductos(arr){
   localStorage.setItem("productos", JSON.stringify(arr));
 }
