@@ -58,6 +58,9 @@ async function sendWithSendGrid({ to, subject, html, attachments = [] }) {
 async function enviarCorreoSuscripcionHTTP(email) {
   const html = `
     <div style="font-family: Arial, sans-serif;">
+    <img src="https://proyectopswbotellonesmx.onrender.com/img/logo-email.png"
+         alt="${company.name}"
+         style="max-width:150px; margin-bottom:10px;" />
       <h2>${company.name}</h2>
       <p><em>"${company.slogan}"</em></p>
       <p>Gracias por suscribirte. Aquí tienes tu cupón de compra (usalo en tu proxima compra):</p>
@@ -75,6 +78,10 @@ async function enviarCorreoSuscripcionHTTP(email) {
 async function enviarCorreoContactoHTTP({ nombre, email, mensaje }) {
   const html = `
     <div style="font-family: Arial, sans-serif;">
+    <div style="text-align:center; margin-bottom:10px;">
+      <img src="https://proyectopswbotellonesmx.onrender.com/img/logo-email.png"
+           alt="${company.name}"
+           style="max-width:150px; margin-bottom:10px;" />
       <h2>${company.name}</h2>
       <p><em>"${company.slogan}"</em></p>
       <p>Hola <strong>${nombre}</strong>, hemos recibido tu mensaje:</p>

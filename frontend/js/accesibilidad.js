@@ -1,4 +1,9 @@
-const ACCESS_KEY = "accesibilidad_v2";
+const { get } = require("http");
+
+function getAccessKey() {
+  const email = localStorage.getItem("userEmail") || "anonimo";
+  return `accesibilidad_${email}`;
+}
 
 const btn = document.getElementById("accesibilidad-btn");
 const panel = document.getElementById("panel-accesibilidad");
@@ -22,7 +27,7 @@ function aplicarPreferencias(prefs) {
 
 function leerPrefs() {
   try {
-    const raw = localStorage.getItem(ACCESS_KEY);
+    const raw = localStorage.getItem(getAccessKey());
     return raw ? JSON.parse(raw) : null;
   } catch (e) {
     return null;
@@ -30,7 +35,7 @@ function leerPrefs() {
 }
 
 function guardarPrefs(prefs) {
-  localStorage.setItem(ACCESS_KEY, JSON.stringify(prefs));
+  localStorage.setItem(getAccessKey(), JSON.stringify(prefs));
   aplicarPreferencias(prefs);
 }
 
