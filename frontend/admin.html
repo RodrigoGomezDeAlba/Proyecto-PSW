@@ -18,7 +18,7 @@
       <img src="img/logo.png" alt="BotellonesMX" class="logo-img" />
       <div>
         <a href="index.html">BotellonesMX</a>
-        <div class="lema-sitio">no hay nada como tomar agua en una buena botella</div>
+        <div class="lema-sitio">No hay nada como tomar agua en una buena botella</div>
       </div>
     </div>
 
@@ -42,9 +42,8 @@
     <section class="admin-grid">
       <section class="admin-block">
         <h2>Productos</h2>
-        <p class="muted small">Aquí se muestran los productos almacenados localmente (localStorage).</p>
-        <div id="lista-productos" class="admin-product-list">
-          </div>
+        <p class="muted small">Estos son los productos registrados en la base de datos.</p>
+        <div id="lista-productos" class="admin-product-list"></div>
       </section>
 
       <aside class="admin-block admin-form-block">
@@ -79,14 +78,13 @@
     <section class="admin-stats">
       <div class="admin-stats-header">
         <div>
-          <h2>Ventas simuladas por categoría</h2>
+          <h2>Ventas por categoría</h2>
           <p class="muted small">
-            Los valores se calculan de forma aleatoria a partir de los productos actuales,
-            solo para fines de demostración.
+            Estos datos se obtienen de las órdenes registradas en el sistema.
           </p>
         </div>
         <div class="admin-total">
-          <span>Total estimado:</span>
+          <span>Total de ventas:</span>
           <strong>$<span id="ventas-total">0</span></strong>
         </div>
       </div>
@@ -124,7 +122,6 @@
 
   <script src="js/accesibilidad.js"></script>
   <script src="js/api.js"></script>
-  <script src="js/tienda.js"></script>   <!-- obtenerProductos / agregarProducto / eliminarProducto -->
   <script src="js/main.js"></script>
   <script src="js/admin.js"></script>
 </body>

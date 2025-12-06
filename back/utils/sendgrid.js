@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { company } = require('../data/company');
+const { buildPurchasePdf } = require('./pdf');
 
 const SG_API_KEY = process.env.SENDGRID_API_KEY;
 const SG_FROM = process.env.SENDGRID_FROM;
@@ -62,6 +63,7 @@ async function sendWithSendGrid({ to, subject, html, attachments = [] }) {
 }
 
 async function enviarCorreoSuscripcionHTTP(email) {
+  const logoUrl = `${FRONTEND_URL}/img/logo.png`;
   const html = `
     <div style="font-family: Arial, sans-serif;">
       <img src="https://proyectopswbotellonesmx.onrender.com/img/logo-email.png"
@@ -97,17 +99,17 @@ async function enviarCorreoSuscripcionHTTP(email) {
 }
 
 async function enviarCorreoContactoHTTP({ nombre, email, mensaje }) {
+  const logoUrl = `${FRONTEND_URL}/img/logo.png`;
   const html = `
-    <div style="font-family: Arial, sans-serif;">
-    <div style="text-align:center; margin-bottom:10px;">
-      <img src="https://proyectopswbotellonesmx.onrender.com/img/logo-email.png"
-           alt="${company.name}"
-           style="max-width:150px; margin-bottom:10px;" />
+    <div style="font-family: Arial, sans-serif; text-align:left;">
+      <div style="text-align:center; margin-bottom:8px;">
+        <img src="${logoUrl}" alt="${company.name}" style="max-width:120px;" />
+      </div>
       <h2>${company.name}</h2>
       <p><em>"${company.slogan}"</em></p>
       <p>Hola <strong>${nombre}</strong>, hemos recibido tu mensaje:</p>
       <blockquote>${mensaje}</blockquote>
-      <p>En breve te atenderemos.</p>
+      <p>En breve serás atendido.</p>
     </div>
   `;
 
@@ -183,10 +185,25 @@ async function enviarCorreoCompraHTTP({
     </div>
   `;
 
+  // Generar PDF usando pdfkit y adjuntarlo como base64
+  let attachments = [];
+  try {
+    const pdfBuffer = await buildPurchasePdf({ nombre, email, items, total: Number(total || 0).toFixed(2) });
+    attachments.push({
+      content: pdfBuffer.toString('base64'),
+      filename: 'nota-compra.pdf',
+      type: 'application/pdf',
+      disposition: 'attachment',
+    });
+  } catch (err) {
+    console.error('Error generando PDF de nota de compra:', err);
+  }
+
   await sendWithSendGrid({
     to: email,
     subject: 'Tu nota de compra',
     html,
+    attachments,
   });
 }
 
