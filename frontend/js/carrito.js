@@ -43,6 +43,22 @@ async function renderCarrito() {
     return;
   }
 
+  // Normalizar tipos numéricos para evitar errores con toFixed()
+  items = items.map(it => {
+    const precio = Number(it.precio_unitario);
+    const cant = Number(it.cantidad);
+    let subtotal = Number(it.subtotal);
+    if (isNaN(subtotal)) {
+      subtotal = (isNaN(cant) ? 0 : cant) * (isNaN(precio) ? 0 : precio);
+    }
+    return {
+      ...it,
+      precio_unitario: isNaN(precio) ? 0 : precio,
+      cantidad: isNaN(cant) ? 0 : cant,
+      subtotal: isNaN(subtotal) ? 0 : subtotal,
+    };
+  });
+
   if (!items.length) {
     cont.innerHTML = "<p>Tu carrito está vacío</p>";
     actualizarResumenDesdeItems([]);
@@ -98,7 +114,7 @@ async function renderCarrito() {
 }
 
 function actualizarResumenDesdeItems(items) {
-  const subtotal = items.reduce((s, it) => s + it.subtotal, 0);
+  const subtotal = items.reduce((s, it) => s + Number(it.subtotal || 0), 0);
   const tax = subtotal * 0.16;
   const ship = subtotal > 1000 ? 0 : 50;
   const total = subtotal + tax + ship;
