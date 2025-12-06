@@ -144,6 +144,17 @@ function actualizarUsuarioHeader() {
   );
 
   nav.appendChild(spanUsuario);
+   if (usuario && usuario.rol === "admin") {
+    const adminLink = document.createElement("a");
+    adminLink.href = "admin.html";
+    adminLink.textContent = "Admin";
+    nav.appendChild(adminLink);
+
+    const adminGrafLink = document.createElement("a");
+    adminGrafLink.href = "admin-grafica.html";
+    adminGrafLink.textContent = "Reportes";
+    nav.appendChild(adminGrafLink);
+  }
   nav.appendChild(logoutLink);
 }
 

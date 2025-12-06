@@ -67,14 +67,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-
-    const items = rawItems.map(it => ({
-      id: it.producto_id,
-      nombre: it.nombre,
-      precio: it.precio_unitario,
-      cantidad: it.cantidad,
-      subtotal: it.subtotal
-    }));
+    // Normalizar items del carrito (asegurar números)
+    const items = rawItems.map(normalizarItemCarrito);
 
     const { subtotal, tax, ship, discount, total } = calcularTotales(items, envio.pais, envio.cupon);
 
@@ -193,7 +187,7 @@ function validarDatosPago(envio) {
 }
 
 function calcularTotales(items, pais = "MX", cupon = "") {
-  const subtotal = items.reduce((s, i) => s + (i.subtotal || 0), 0);
+  const subtotal = items.reduce((s, i) => s + (Number(i.subtotal) || 0), 0);
 
   let taxRate;
   let ship;
@@ -233,10 +227,28 @@ function calcularTotales(items, pais = "MX", cupon = "") {
   return { subtotal, tax, ship, discount, total };
 }
 
+function normalizarItemCarrito(it) {
+  const precio = Number(it.precio_unitario);
+  const cantidad = Number(it.cantidad) || 0;
+  const subtotal = Number(it.subtotal);
+
+  const precioNum = isNaN(precio) ? 0 : precio;
+  const subNum = isNaN(subtotal) ? precioNum * cantidad : subtotal;
+
+  return {
+    id: it.producto_id,
+    nombre: it.nombre,
+    precio: precioNum,
+    cantidad,
+    subtotal: subNum,
+  };
+}
+
 function actualizarResumenCheckout(items, pais) {
   const inputCupon = document.getElementById("cupon");
   const cupon = inputCupon ? inputCupon.value : "";
-  calcularTotales(items, pais, cupon);
+  const normalizados = items.map(normalizarItemCarrito);
+  calcularTotales(normalizados, pais, cupon);
 }
 
 function generarNotaHTML(order) {
