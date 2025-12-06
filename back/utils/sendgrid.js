@@ -1,4 +1,5 @@
 const { company } = require('../data/company');
+const { buildPurchasePdf } = require('./pdf');
 
 const SG_API_KEY = process.env.SENDGRID_API_KEY;
 const SG_FROM = process.env.SENDGRID_FROM;
@@ -122,13 +123,29 @@ async function enviarCorreoCompraHTTP({ nombre, email, items = [], total }) {
         <tbody>${filas}</tbody>
       </table>
       <p style="margin-top:10px;">Total pagado: <strong>$${Number(total || 0).toFixed(2)}</strong></p>
+      <p style="margin-top:4px; font-size:0.9rem; color:#6b7280;">Se adjunta una copia en PDF como nota de compra.</p>
     </div>
   `;
+
+  // Generar PDF usando pdfkit y adjuntarlo como base64
+  let attachments = [];
+  try {
+    const pdfBuffer = await buildPurchasePdf({ nombre, email, items, total: Number(total || 0).toFixed(2) });
+    attachments.push({
+      content: pdfBuffer.toString('base64'),
+      filename: 'nota-compra.pdf',
+      type: 'application/pdf',
+      disposition: 'attachment',
+    });
+  } catch (err) {
+    console.error('Error generando PDF de nota de compra:', err);
+  }
 
   await sendWithSendGrid({
     to: email,
     subject: 'Tu nota de compra',
     html,
+    attachments,
   });
 }
 
