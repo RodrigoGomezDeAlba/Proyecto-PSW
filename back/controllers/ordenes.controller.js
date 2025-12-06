@@ -25,7 +25,17 @@ async function crearOrden(req, res) {
     const emailCliente =
       req.user.email || req.user.correo || null;
 
-    // Enviar correo de compra 
+    // Datos adicionales que vienen del frontend (nota local)
+    const {
+      subtotal: frontSubtotal,
+      tax: frontTax,
+      ship: frontShip,
+      discount: frontDiscount,n      cupon: frontCupon,
+      fecha: frontFecha,
+      metodoPago: frontMetodoPago,
+    } = req.body || {};
+
+    // Enviar correo de compra con información completa
     if (emailCliente) {
       try {
         await enviarCorreoCompraHTTP({
@@ -33,6 +43,13 @@ async function crearOrden(req, res) {
           email: emailCliente,
           items,
           total,
+          subtotal: frontSubtotal,
+          tax: frontTax,
+          ship: frontShip,
+          discount: frontDiscount,
+          cupon: frontCupon,
+          fecha: frontFecha,
+          metodoPago: frontMetodoPago,
         });
       } catch (errMail) {
         console.error('Error al enviar correo de compra:', errMail);
