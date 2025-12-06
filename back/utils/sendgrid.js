@@ -56,12 +56,14 @@ async function sendWithSendGrid({ to, subject, html, attachments = [] }) {
 }
 
 async function enviarCorreoSuscripcionHTTP(email) {
+  const logoUrl = `${FRONTEND_URL}/img/logo.png`;
   const html = `
-    <div style="font-family: Arial, sans-serif;">
+    <div style="font-family: Arial, sans-serif; text-align:center;">
+      <img src="${logoUrl}" alt="${company.name}" style="max-width:120px; margin-bottom:8px;" />
       <h2>${company.name}</h2>
       <p><em>"${company.slogan}"</em></p>
-      <p>Gracias por suscribirte. Aquí tienes tu cupón de compra (usalo en tu proxima compra):</p>
-      <p><strong>CUPÓN: BOTELLONES10</strong></p>
+      <p>Gracias por suscribirte. Aquí tienes tu cupón de compra (úsalo en tu próxima compra):</p>
+      <p style="font-size:1.3rem;"><strong>CUPÓN: BOTELLONES10</strong></p>
     </div>
   `;
 
@@ -73,13 +75,17 @@ async function enviarCorreoSuscripcionHTTP(email) {
 }
 
 async function enviarCorreoContactoHTTP({ nombre, email, mensaje }) {
+  const logoUrl = `${FRONTEND_URL}/img/logo.png`;
   const html = `
-    <div style="font-family: Arial, sans-serif;">
+    <div style="font-family: Arial, sans-serif; text-align:left;">
+      <div style="text-align:center; margin-bottom:8px;">
+        <img src="${logoUrl}" alt="${company.name}" style="max-width:120px;" />
+      </div>
       <h2>${company.name}</h2>
       <p><em>"${company.slogan}"</em></p>
       <p>Hola <strong>${nombre}</strong>, hemos recibido tu mensaje:</p>
       <blockquote>${mensaje}</blockquote>
-      <p>En breve te atenderemos.</p>
+      <p>En breve serás atendido.</p>
     </div>
   `;
 
@@ -91,6 +97,7 @@ async function enviarCorreoContactoHTTP({ nombre, email, mensaje }) {
 }
 
 async function enviarCorreoCompraHTTP({ nombre, email, items = [], total }) {
+  const logoUrl = `${FRONTEND_URL}/img/logo.png`;
   const filas = items
     .map(
       (it, idx) =>
@@ -102,6 +109,9 @@ async function enviarCorreoCompraHTTP({ nombre, email, items = [], total }) {
 
   const html = `
     <div style="font-family: Arial, sans-serif;">
+      <div style="text-align:center; margin-bottom:8px;">
+        <img src="${logoUrl}" alt="${company.name}" style="max-width:120px;" />
+      </div>
       <h2>${company.name} - Nota de compra</h2>
       <p><em>"${company.slogan}"</em></p>
       <p>Cliente: <strong>${nombre}</strong></p>
