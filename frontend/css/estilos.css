@@ -64,6 +64,8 @@ html, body {
 .lema-sitio {
   font-size: 0.85rem;
   color: var(--muted);
+  font-style: italic;
+  letter-spacing: 0.02em;
 }
 
 .menu a {
@@ -236,8 +238,12 @@ a {
 }
 
 #resumen-compra .btn {
+  display: block;
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   margin-top: 12px;
+  border-radius: 8px; /* cuadrado dentro del recuadro de resumen */
 }
 
 #carrito-list {
