@@ -1,5 +1,3 @@
-const { get } = require("http");
-
 function getAccessKey() {
   const email = localStorage.getItem("userEmail") || "anonimo";
   return `accesibilidad_${email}`;
@@ -11,7 +9,9 @@ const temaToggle = document.getElementById("tema-toggle");
 const btnAumentar = document.getElementById("texto-aumentar");
 const btnReducir = document.getElementById("texto-reducir");
 
-btn.addEventListener("click", () => panel.classList.toggle("oculto"));
+if (btn && panel) {
+  btn.addEventListener("click", () => panel.classList.toggle("oculto"));
+}
 
 function aplicarPreferencias(prefs) {
   if (!prefs) return;
@@ -22,7 +22,7 @@ function aplicarPreferencias(prefs) {
   }
 
   const escala = prefs.escala || 1;
-  document.documentElement.style.setProperty('--font-scale', escala);
+  document.documentElement.style.setProperty("--font-scale", escala);
 }
 
 function leerPrefs() {
@@ -44,14 +44,17 @@ window.addEventListener("DOMContentLoaded", () => {
   if (prefs) aplicarPreferencias(prefs);
 });
 
-temaToggle.addEventListener("click", () => {
-  const activo = document.body.classList.toggle("tema-oscuro");
-  const prefs = leerPrefs() || { tema: "claro", escala: 1 };
-  prefs.tema = activo ? "oscuro" : "claro";
-  guardarPrefs(prefs);
-});
+if (temaToggle) {
+  temaToggle.addEventListener("click", () => {
+    const activo = document.body.classList.toggle("tema-oscuro");
+    const prefs = leerPrefs() || { tema: "claro", escala: 1 };
+    prefs.tema = activo ? "oscuro" : "claro";
+    guardarPrefs(prefs);
+  });
+}
 
 const escalas = [0.9, 1, 1.1, 1.25, 1.4];
+
 function escalaActual() {
   const prefs = leerPrefs();
   return (prefs && prefs.escala) ? prefs.escala : 1;
@@ -63,7 +66,10 @@ function aumentarEscala() {
   if (idx === -1) idx = 1;
   if (idx < escalas.length - 1) idx++;
   const nueva = escalas[idx];
-  const prefs = leerPrefs() || { tema: (document.body.classList.contains("tema-oscuro") ? "oscuro" : "claro"), escala: 1 };
+  const prefs = leerPrefs() || {
+    tema: (document.body.classList.contains("tema-oscuro") ? "oscuro" : "claro"),
+    escala: 1
+  };
   prefs.escala = nueva;
   guardarPrefs(prefs);
 }
@@ -74,10 +80,13 @@ function reducirEscala() {
   if (idx === -1) idx = 1;
   if (idx > 0) idx--;
   const nueva = escalas[idx];
-  const prefs = leerPrefs() || { tema: (document.body.classList.contains("tema-oscuro") ? "oscuro" : "claro"), escala: 1 };
+  const prefs = leerPrefs() || {
+    tema: (document.body.classList.contains("tema-oscuro") ? "oscuro" : "claro"),
+    escala: 1
+  };
   prefs.escala = nueva;
   guardarPrefs(prefs);
 }
 
-btnAumentar.addEventListener("click", aumentarEscala);
-btnReducir.addEventListener("click", reducirEscala);
+if (btnAumentar) btnAumentar.addEventListener("click", aumentarEscala);
+if (btnReducir) btnReducir.addEventListener("click", reducirEscala);
