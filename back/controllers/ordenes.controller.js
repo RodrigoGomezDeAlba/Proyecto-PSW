@@ -30,7 +30,8 @@ async function crearOrden(req, res) {
       subtotal: frontSubtotal,
       tax: frontTax,
       ship: frontShip,
-      discount: frontDiscount,n      cupon: frontCupon,
+      discount: frontDiscount,
+      cupon: frontCupon,
       fecha: frontFecha,
       metodoPago: frontMetodoPago,
     } = req.body || {};
