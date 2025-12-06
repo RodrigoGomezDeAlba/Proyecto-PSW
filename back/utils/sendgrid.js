@@ -66,6 +66,27 @@ async function sendWithSendGrid({ to, subject, html, attachments = [] }) {
 }
 
 async function enviarCorreoSuscripcionHTTP(email) {
+  let cuponB64 = null;
+  const attachments = [];
+
+  try {
+    // Leer la imagen del cupón como base64 para adjuntarla en el correo
+    cuponB64 = fs.readFileSync(CUPON_IMAGE_PATH).toString('base64');
+    attachments.push({
+      content: cuponB64,
+      filename: 'cupon-botellones10.png',
+      type: 'image/png',
+    });
+  } catch (err) {
+    console.error('No se pudo leer la imagen del cupón para adjuntar:', err.message);
+  }
+
+  const cuponImgTag = cuponB64
+    ? `<img src="data:image/png;base64,${cuponB64}"
+             alt="Cupón BOTELLONES10"
+             style="max-width:320px; display:block; margin:10px auto;" />`
+    : '';
+
   const html = `
     <div style="font-family: Arial, sans-serif;">
       <img src="${LOGO_URL}"
@@ -75,22 +96,10 @@ async function enviarCorreoSuscripcionHTTP(email) {
       <p><em>"${company.slogan}"</em></p>
       <p>Gracias por suscribirte. Te enviamos tu cupón en la imagen adjunta.
          Úsalo en tu próxima compra:</p>
+      ${cuponImgTag}
       <p><strong>CUPÓN: BOTELLONES10</strong></p>
     </div>
   `;
-
-  let attachments = [];
-  try {
-    // Leer la imagen del cupón como base64 para adjuntarla en el correo
-    const cuponB64 = fs.readFileSync(CUPON_IMAGE_PATH).toString('base64');
-    attachments.push({
-      content: cuponB64,
-      filename: 'cupon-botellones10.png',
-      type: 'image/png',
-    });
-  } catch (err) {
-    console.error('No se pudo leer la imagen del cupón para adjuntar:', err.message);
-  }
 
   await sendWithSendGrid({
     to: email,
